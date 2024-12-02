@@ -1,9 +1,9 @@
 use std::collections::HashMap;
 
-use crate::utils::{Day, Task};
+use crate::utils::{Day, Task, read_lines};
 
 fn parse_file(filename: &str) -> (Vec<u32>, Vec<u32>) {
-    crate::utils::read_lines(filename)
+    read_lines(filename)
         .flat_map(|line| {
             let mut a = line.split_whitespace().flat_map(str::parse::<u32>);
             Some((a.next()?, a.next()?))
