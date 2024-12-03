@@ -1,6 +1,8 @@
 use crate::utils::{Day, Task, read_lines};
 
-fn try_mul(s: &str) -> Option<u32> {
+fn parse_mul(s: &str, l_br: usize) -> Option<u32> {
+    let r_br_max = (l_br + 8).min(s.len() - 1);
+    let s = s[l_br + 1..=r_br_max].find(')').map(|r_br| &s[l_br + 1..=l_br + r_br])?;
     let (a, b) = s.split_once(',')?;
     let a = a.parse::<u32>().ok()?;
     let b = b.parse::<u32>().ok()?;
@@ -12,13 +14,9 @@ fn p1_sum_of_mul(filename: &str) -> u32 {
         .map(|line| {
             std::iter::successors(Some((line.as_str(), None)), |&(suffix, _)| {
                 let l_br = suffix.find("mul(")? + 3;
-                let r_br_max = (l_br + 8).min(suffix.len() - 1);
-                let substr = suffix[l_br + 1..=r_br_max]
-                    .find(')')
-                    .map(|r_br| &suffix[l_br + 1..=l_br + r_br]);
-                Some((&suffix[l_br + 1..], substr))
+                Some((&suffix[l_br + 1..], parse_mul(suffix, l_br)))
             })
-            .filter_map(|(_, substr)| try_mul(substr?))
+            .flat_map(|(_, x)| x)
             .sum::<u32>()
         })
         .sum()
@@ -38,18 +36,10 @@ fn p1_sum_of_mul_enable(filename: &str) -> u32 {
                     _ => *enabled,
                 };
 
-                let substr = match enabled {
-                    true => {
-                        let r_br_max = (l_br + 8).min(suffix.len() - 1);
-                        suffix[l_br + 1..=r_br_max]
-                            .find(')')
-                            .map(|r_br| &suffix[l_br + 1..=l_br + r_br])
-                    }
-                    false => None,
-                };
-                Some((&suffix[l_br + 1..], substr))
+                let mul = enabled.then(|| parse_mul(suffix, l_br)).flatten();
+                Some((&suffix[l_br + 1..], mul))
             })
-            .filter_map(|(_, substr)| try_mul(substr?))
+            .flat_map(|(_, x)| x)
             .sum::<u32>();
             Some(res)
         })
