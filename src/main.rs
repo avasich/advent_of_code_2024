@@ -1,5 +1,5 @@
 fn main() {
-    run_day(2);
+    run_day(3);
 }
 
 fn run_day(day_number: usize) {
@@ -8,6 +8,7 @@ fn run_day(day_number: usize) {
     let solution: Box<&dyn Solution> = match day_number {
         1 => Box::new(&d01_historian_hysteria::SOLUTION),
         2 => Box::new(&d02_red_nosed_reports::SOLUTION),
+        3 => Box::new(&d03_mull_it_over::SOLUTION),
         _ => unreachable!(),
     };
 

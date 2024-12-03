@@ -39,23 +39,28 @@ fn p2_count_safe_allow_error(filename: &str) -> usize {
         .count()
 }
 
-fn find_unsafe(xs: impl Iterator<Item = i32>) -> Option<[usize; 3]> {
+fn find_unsafe(xs: impl Iterator<Item = i32>) -> Option<usize> {
     xs.map_windows(|&[a, b]| Kind::new(a, b))
         .map_windows(|[s1, s2]| !matches!([s1, s2], [Inc, Inc] | [Dec, Dec]))
         .enumerate()
-        .find_map(|(i, err)| err.then_some([i, i + 1, i + 2]))
+        .find_map(|(i, err)| err.then_some(i))
 }
 
 fn with_error_allowed(xs: &[i32], skip: Option<usize>) -> bool {
     match skip {
+        // Some(skip) => {
+        //     let start = skip.saturating_sub(2);
+        //     find_unsafe(std::iter::chain(&xs[start..skip], &xs[skip + 1..]).copied()).is_none()
+        // }
+
+        // inputs are short, so that's ok too
         Some(skip) => {
-            let start = skip.saturating_sub(2);
-            let iter = std::iter::chain(&xs[start..skip], &xs[(skip + 1)..]).copied();
-            find_unsafe(iter).is_none()
+            find_unsafe(std::iter::chain(&xs[..skip], &xs[skip + 1..]).copied()).is_none()
         }
+
         None => match find_unsafe(xs.iter().copied()) {
             None => true,
-            Some(js) => js.iter().any(|&j| with_error_allowed(xs, Some(j))),
+            Some(i) => (i..i + 3).any(|j| with_error_allowed(xs, Some(j))),
         },
     }
 }
@@ -97,11 +102,3 @@ mod d02_tests {
         assert_eq!(res, 4);
     }
 }
-
-/*
-0  100  -1   2
-  inc 100     dec -101     inc 3
-
-0  100  -1   101
-  inc 100     dec -101     inc 102
- */
