@@ -2,8 +2,8 @@ use crate::utils::{Day, Task, read_lines};
 
 fn parse_mul(s: &str, l_br: usize) -> Option<u32> {
     let r_br_max = (l_br + 8).min(s.len() - 1);
-    let s = s[l_br + 1..=r_br_max].find(')').map(|r_br| &s[l_br + 1..=l_br + r_br])?;
-    let (a, b) = s.split_once(',')?;
+    let r_br = s[l_br + 1..=r_br_max].find(')')?;
+    let (a, b) = s[l_br + 1..=l_br + r_br].split_once(',')?;
     let a = a.parse::<u32>().ok()?;
     let b = b.parse::<u32>().ok()?;
     Some(a * b)
