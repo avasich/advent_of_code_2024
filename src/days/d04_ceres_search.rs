@@ -53,6 +53,7 @@ fn count(chars: impl Iterator<Item = char>) -> usize {
 
     let (_, res) =
         chars.fold((0, 0), |(seek, count), c| match STR.chars().position(|c1| c1 == c) {
+            Some(0) => (1, count),
             Some(p) if p == seek => (p + 1 % LEN, count + (p + 1) / LEN),
             _ => (0, count),
         });
@@ -88,10 +89,6 @@ mod playground {
     #[test]
     #[ignore]
     fn playground() {}
-
-    #[test]
-    #[ignore]
-    fn foo() {}
 }
 
 #[cfg(test)]
