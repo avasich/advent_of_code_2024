@@ -1,13 +1,13 @@
 use crate::utils::{Day, Task, read_lines};
 
 fn p1_count_xmas(filename: &str) -> usize {
-    let table: Vec<Vec<_>> = read_lines(filename).map(|line| line.chars().collect()).collect();
-    let (w, h) = (table[0].len(), table.len());
-    let get_char = |(x, y): (usize, usize)| table[y][x];
+    let cs: Vec<Vec<_>> = read_lines(filename).map(|line| line.chars().collect()).collect();
+    let (w, h) = (cs[0].len(), cs.len());
+    let get_char = |(x, y): (usize, usize)| cs[y][x];
 
     let mut res = 0;
 
-    table.iter().for_each(|row| {
+    cs.iter().for_each(|row| {
         res += count(row.iter().copied());
         res += count(row.iter().rev().copied());
     });
@@ -31,8 +31,20 @@ fn p1_count_xmas(filename: &str) -> usize {
 
     res
 }
+
 fn p2(filename: &str) -> usize {
-    todo!("part to wip")
+    const MS: (char, char) = ('M', 'S');
+    let cs: Vec<Vec<_>> = read_lines(filename).map(|line| line.chars().collect()).collect();
+    let (w, h) = (cs[0].len(), cs.len());
+
+    (1..h - 1)
+        .flat_map(|y| (1..w - 1).map(move |x| (x, y)))
+        .filter(|&(x, y)| cs[y][x] == 'A')
+        .map(|(x, y)| [cs[y - 1][x - 1], cs[y + 1][x + 1], cs[y - 1][x + 1], cs[y + 1][x - 1]])
+        .filter(|&[c11, c12, c21, c22]| {
+            ((c11, c12) == MS || (c12, c11) == MS) && ((c21, c22) == MS || (c22, c21) == MS)
+        })
+        .count()
 }
 
 fn count(chars: impl Iterator<Item = char>) -> usize {
@@ -41,11 +53,9 @@ fn count(chars: impl Iterator<Item = char>) -> usize {
 
     let (_, res) =
         chars.fold((0, 0), |(seek, count), c| match STR.chars().position(|c1| c1 == c) {
-            Some(0) => (1, count),
             Some(p) if p == seek => (p + 1 % LEN, count + (p + 1) / LEN),
             _ => (0, count),
         });
-
     res
 }
 
@@ -53,15 +63,18 @@ pub const SOLUTION: Day<usize, usize> = Day {
     part_1: Task {
         examples: &[
             "./inputs/day_04/example_0_letters.txt",
-            "./inputs/day_04/example_0_dots.txt",
+            "./inputs/day_04/example_0_dots_p1.txt",
             "./inputs/day_04/example_1_letters.txt",
-            "./inputs/day_04/example_1_dots.txt",
+            "./inputs/day_04/example_1_dots_p1.txt",
         ],
         task: "./inputs/day_04/task.txt",
         func: p1_count_xmas,
     },
     part_2: Task {
-        examples: &["./inputs/day_04/example.txt"],
+        examples: &[
+            "./inputs/day_04/example_0_letters.txt",
+            "./inputs/day_04/example_0_dots_p2.txt",
+        ],
         task: "./inputs/day_04/task.txt",
         func: p2,
     },
@@ -93,6 +106,7 @@ mod d04_tests {
 
     #[test]
     fn p2_example_test() {
-        let _res = SOLUTION.part_2.run_example(0);
+        let res = SOLUTION.part_2.run_example(0);
+        assert_eq!(res, 9);
     }
 }
