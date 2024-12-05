@@ -9,53 +9,58 @@ fn parse_mul(s: &str, l_br: usize) -> Option<u32> {
     Some(a * b)
 }
 
-fn p1_sum_of_mul(filename: &str) -> u32 {
-    read_lines(filename)
-        .map(|line| {
-            std::iter::successors(Some((line.as_str(), None)), |&(suffix, _)| {
-                let l_br = suffix.find("mul(")? + 3;
-                Some((&suffix[l_br + 1..], parse_mul(suffix, l_br)))
-            })
-            .flat_map(|(_, x)| x)
-            .sum::<u32>()
+fn p1_sum_of_mul(ss: impl Iterator<Item = String>) -> u32 {
+    ss.map(|line| {
+        std::iter::successors(Some((line.as_str(), None)), |&(suffix, _)| {
+            let l_br = suffix.find("mul(")? + 3;
+            Some((&suffix[l_br + 1..], parse_mul(suffix, l_br)))
         })
-        .sum()
+        .flat_map(|(_, x)| x)
+        .sum::<u32>()
+    })
+    .sum()
 }
 
-fn p1_sum_of_mul_enable(filename: &str) -> u32 {
-    read_lines(filename)
-        .scan(true, |enabled, line| {
-            let res = std::iter::successors(Some((line.as_str(), None)), |&(suffix, _)| {
-                let l_br = suffix.find("mul(")? + 3;
-                let enable = suffix[..l_br].rfind("do()");
-                let disable = suffix[..l_br].rfind("don't()");
-                *enabled = match (enable, disable) {
-                    (Some(e), Some(d)) => e > d,
-                    (Some(_), None) => true,
-                    (None, Some(_)) => false,
-                    _ => *enabled,
-                };
-
-                let mul = enabled.then(|| parse_mul(suffix, l_br)).flatten();
-                Some((&suffix[l_br + 1..], mul))
+fn p2_sum_of_mul_enable(ss: impl Iterator<Item = String>) -> u32 {
+    ss.scan(true, |enabled, line| {
+        let res = (0..line.len())
+            .flat_map(|i| {
+                if line[i..].starts_with("do()") {
+                    *enabled = true;
+                    None
+                } else if line[i..].starts_with("don't") {
+                    *enabled = false;
+                    None
+                } else if *enabled && line[i..].starts_with("mul(") {
+                    parse_mul(&line[i..], 3)
+                } else {
+                    None
+                }
             })
-            .flat_map(|(_, x)| x)
             .sum::<u32>();
-            Some(res)
-        })
-        .sum()
+        Some(res)
+    })
+    .sum()
+}
+
+fn p1(filename: &str) -> u32 {
+    p1_sum_of_mul(read_lines(filename))
+}
+
+fn p2(filename: &str) -> u32 {
+    p2_sum_of_mul_enable(read_lines(filename))
 }
 
 pub const SOLUTION: Day<u32, u32> = Day {
     part_1: Task {
         examples: &["./inputs/day_03/example_1.txt"],
         task: "./inputs/day_03/task.txt",
-        func: p1_sum_of_mul,
+        func: p1,
     },
     part_2: Task {
         examples: &["./inputs/day_03/example_2.txt"],
         task: "./inputs/day_03/task.txt",
-        func: p1_sum_of_mul_enable,
+        func: p2,
     },
 };
 
@@ -76,8 +81,5 @@ mod d03_tests {
     }
 
     #[test]
-    fn foo() {
-        let x = &"ab"[1..5];
-        println!("{x:?}");
-    }
+    fn foo() {}
 }
