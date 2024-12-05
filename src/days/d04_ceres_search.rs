@@ -32,7 +32,7 @@ fn p1_count_xmas(filename: &str) -> usize {
     res
 }
 
-fn p2(filename: &str) -> usize {
+fn p2_cross(filename: &str) -> usize {
     const MS: (char, char) = ('M', 'S');
     let cs: Vec<Vec<_>> = read_lines(filename).map(|line| line.chars().collect()).collect();
     let (w, h) = (cs[0].len(), cs.len());
@@ -76,7 +76,7 @@ pub const SOLUTION: Day<usize, usize> = Day {
             "./inputs/day_04/example_0_dots_p2.txt",
         ],
         task: "./inputs/day_04/task.txt",
-        func: p2,
+        func: p2_cross,
     },
 };
 
