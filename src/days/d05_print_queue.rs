@@ -1,50 +1,61 @@
 use std::{
+    cmp::Ordering,
     collections::{HashMap, HashSet},
     ops::ControlFlow,
 };
 
 use crate::utils::{Day, Task, read_lines};
 
+fn check_nums(nums: &[u32], cmp: &HashMap<(u32, u32), Ordering>) -> bool {
+    nums.iter()
+        .try_fold(HashSet::<u32>::new(), |mut found, &rhs| {
+            let is_ok =
+                found.iter().all(|&lhs| !matches!(cmp.get(&(lhs, rhs)), Some(Ordering::Greater)));
+            match is_ok {
+                true => {
+                    found.insert(rhs);
+                    ControlFlow::Continue(found)
+                }
+                false => ControlFlow::Break(()),
+            }
+        })
+        .is_continue()
+}
+
+fn cmp_map(ss: &mut impl Iterator<Item = String>) -> HashMap<(u32, u32), Ordering> {
+    std::iter::from_fn(|| ss.next().filter(|line| !line.is_empty()))
+        .flat_map(|s| {
+            let (lhs, rhs) = s.split_once('|')?;
+            Some((lhs.parse::<u32>().ok()?, rhs.parse::<u32>().ok()?))
+        })
+        .fold(HashMap::new(), |mut cmps, (lhs, rhs)| {
+            cmps.insert((lhs, rhs), Ordering::Less);
+            cmps.insert((rhs, lhs), Ordering::Greater);
+            cmps
+        })
+}
+
 fn p1(filename: &str) -> u32 {
-    let mut lines = read_lines(filename);
+    let mut ss = read_lines(filename);
+    let cmp = cmp_map(&mut ss);
 
-    let afters = std::iter::from_fn(|| lines.next().filter(|line| !line.is_empty()))
-        .flat_map(|line| {
-            let (before, after) = line.split_once('|')?;
-            Some((before.parse::<u32>().ok()?, after.parse::<u32>().ok()?))
-        })
-        .fold(HashMap::new(), |mut afters, (before, after)| {
-            afters.entry(before).or_insert(vec![]).push(after);
-            afters
-        });
-
-    let check_found = |n: u32, found: &HashSet<u32>| {
-        match afters.get(&n) {
-            None => true,
-            Some(should_be_after) => !should_be_after.iter().any(|a| found.contains(a)),
-        }
-    };
-
-    lines
-        .flat_map(|line| {
-            let nums: Vec<_> = line.split(',').flat_map(str::parse::<u32>).collect();
-            nums.iter()
-                .try_fold(HashSet::new(), |mut found, &n| {
-                    if check_found(n, &found) {
-                        found.insert(n);
-                        ControlFlow::Continue(found)
-                    } else {
-                        ControlFlow::Break(())
-                    }
-                })
-                .is_continue()
-                .then_some(nums[nums.len() / 2])
-        })
+    ss.map(|line| line.split(',').flat_map(str::parse::<u32>).collect::<Vec<_>>())
+        .filter(|nums| check_nums(nums, &cmp))
+        .map(|nums| nums[nums.len() / 2])
         .sum()
 }
 
-fn p2(filname: &str) -> u32 {
-    0
+fn p2(filename: &str) -> u32 {
+    let mut ss = read_lines(filename);
+    let cmp = cmp_map(&mut ss);
+
+    ss.map(|line| line.split(',').flat_map(str::parse::<u32>).collect::<Vec<_>>())
+        .filter(|nums| !check_nums(nums, &cmp))
+        .map(|mut nums| {
+            nums.sort_by(|&a, &b| *cmp.get(&(a, b)).unwrap_or(&Ordering::Equal));
+            nums[nums.len() / 2]
+        })
+        .sum()
 }
 
 pub const SOLUTION: Day<u32, u32> = Day {
@@ -72,6 +83,7 @@ mod d05_tests {
 
     #[test]
     fn p2_example_test() {
-        let _res = SOLUTION.part_1.run_example(0);
+        let res = SOLUTION.part_2.run_example(0);
+        assert_eq!(res, 123);
     }
 }
