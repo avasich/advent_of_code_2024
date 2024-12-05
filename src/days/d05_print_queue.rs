@@ -1,25 +1,22 @@
 use std::{
     cmp::Ordering,
     collections::{HashMap, HashSet},
-    ops::ControlFlow,
 };
 
 use crate::utils::{Day, Task, read_lines};
 
 fn check_nums(nums: &[u32], cmp: &HashMap<(u32, u32), Ordering>) -> bool {
-    nums.iter()
-        .try_fold(HashSet::<u32>::new(), |mut found, &rhs| {
-            let is_ok =
-                found.iter().all(|&lhs| !matches!(cmp.get(&(lhs, rhs)), Some(Ordering::Greater)));
-            match is_ok {
-                true => {
-                    found.insert(rhs);
-                    ControlFlow::Continue(found)
-                }
-                false => ControlFlow::Break(()),
-            }
-        })
-        .is_continue()
+    let mut found = HashSet::new();
+    for &rhs in nums {
+        let is_ok =
+            found.iter().all(|&lhs| !matches!(cmp.get(&(lhs, rhs)), Some(Ordering::Greater)));
+        if is_ok {
+            found.insert(rhs);
+        } else {
+            return false;
+        }
+    }
+    true
 }
 
 fn cmp_map(ss: &mut impl Iterator<Item = String>) -> HashMap<(u32, u32), Ordering> {
@@ -28,10 +25,10 @@ fn cmp_map(ss: &mut impl Iterator<Item = String>) -> HashMap<(u32, u32), Orderin
             let (lhs, rhs) = s.split_once('|')?;
             Some((lhs.parse::<u32>().ok()?, rhs.parse::<u32>().ok()?))
         })
-        .fold(HashMap::new(), |mut cmps, (lhs, rhs)| {
-            cmps.insert((lhs, rhs), Ordering::Less);
-            cmps.insert((rhs, lhs), Ordering::Greater);
-            cmps
+        .fold(HashMap::new(), |mut cmp, (lhs, rhs)| {
+            cmp.insert((lhs, rhs), Ordering::Less);
+            cmp.insert((rhs, lhs), Ordering::Greater);
+            cmp
         })
 }
 
