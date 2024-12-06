@@ -1,5 +1,5 @@
 fn main() {
-    run_day(5);
+    run_day(6);
 }
 
 fn run_day(day_number: usize) {
@@ -11,6 +11,7 @@ fn run_day(day_number: usize) {
         3 => Box::new(d03_mull_it_over::SOLUTION),
         4 => Box::new(d04_ceres_search::SOLUTION),
         5 => Box::new(d05_print_queue::SOLUTION),
+        6 => Box::new(d06_guard_gallivant::SOLUTION),
         _ => unreachable!(),
     };
 
