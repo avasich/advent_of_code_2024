@@ -1,8 +1,8 @@
-use std::{collections::HashSet, ops::ControlFlow};
+use std::collections::HashSet;
 
 use itertools::Itertools;
 
-use crate::utils::{Day, Task, read_lines};
+use crate::utils::{read_lines, Day, Task};
 
 #[rustfmt::skip]
 #[derive(Copy, Clone)]
@@ -120,10 +120,10 @@ fn p2_add_obstacle(tiles: &mut [Vec<Tile>], start: Guard) -> usize {
             tiles[g2.y][g2.x] = Tile::Obstacle;
             let stuck = std::iter::successors(Some(g1), |g| g.advance(tiles))
                 .try_fold(HashSet::new(), |mut loop_visited, g| match loop_visited.insert(g) {
-                    true => ControlFlow::Continue(loop_visited),
-                    false => ControlFlow::Break(()),
+                    true => Some(loop_visited),
+                    false => None,
                 })
-                .is_break();
+                .is_none();
             tiles[g2.y][g2.x] = Tile::Empty;
             stuck
         })

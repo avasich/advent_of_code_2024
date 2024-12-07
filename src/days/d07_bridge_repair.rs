@@ -43,6 +43,8 @@ fn p2_three_ops(filename: &str) -> u64 {
                         .take(gaps)
                         .enumerate()
                         .map(|(i, op)| (xs[i + 1], op % 3))
+                        // since all numbers are strictly greater than 0 
+                        // and all ops increase the result
                         .try_fold(xs[0], |acc, (x, op)| match op {
                             _ if acc > target => None,
                             0 => Some(acc + x),
