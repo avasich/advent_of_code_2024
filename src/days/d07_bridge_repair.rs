@@ -5,20 +5,17 @@ fn p1(filename: &str) -> u64 {
         .flat_map(|line| {
             let (v, xs) = line.split_once(':')?;
             let target: u64 = v.parse().ok()?;
-            let xs: Vec<u64> = xs.trim().split_whitespace().flat_map(str::parse).collect();
+            let xs: Vec<u64> = xs.split_whitespace().flat_map(str::parse).collect();
             Some((target, xs))
         })
         .filter_map(|(target, xs)| {
-            let gaps = xs.len() as u32 - 1;
-            (0..2u64.pow(gaps))
-                .map(|x| {
-                    (0..gaps).map(move |pos| x & (1 << pos) != 0).enumerate().fold(
-                        xs[0],
-                        |acc, (i, op)| match op {
-                            true => acc * xs[i + 1],
-                            false => acc + xs[i + 1],
-                        },
-                    )
+            let gaps = xs.len() - 1;
+            (0..2u64.pow(gaps as u32))
+                .map(|ops| {
+                    (0..gaps).fold(xs[0], |acc, i| match ops & (1 << i) {
+                        0 => acc + xs[i + 1],
+                        _ => acc * xs[i + 1],
+                    })
                 })
                 .any(|res| res == target)
                 .then_some(target)
