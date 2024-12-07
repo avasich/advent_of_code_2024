@@ -1,6 +1,4 @@
-use std::ops::ControlFlow;
-
-use crate::utils::{Day, Task, read_lines};
+use crate::utils::{read_lines, Day, Task};
 
 fn parse_file(filename: &str) -> impl Iterator<Item = (u64, Vec<u64>)> {
     read_lines(filename).flat_map(|line| {
@@ -46,13 +44,12 @@ fn p2_three_ops(filename: &str) -> u64 {
                         .enumerate()
                         .map(|(i, op)| (xs[i + 1], op % 3))
                         .try_fold(xs[0], |acc, (x, op)| match op {
-                            _ if acc > target => ControlFlow::Break(()),
-                            0 => ControlFlow::Continue(acc + x),
-                            1 => ControlFlow::Continue(acc * x),
-                            2 => ControlFlow::Continue(acc * next_power_of_ten(x) + x),
+                            _ if acc > target => None,
+                            0 => Some(acc + x),
+                            1 => Some(acc * x),
+                            2 => Some(acc * next_power_of_ten(x) + x),
                             _ => unreachable!(),
                         })
-                        .continue_value()
                 })
                 .any(|res| res == target)
                 .then_some(target)
