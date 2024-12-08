@@ -5,3 +5,4 @@ pub mod d04_ceres_search;
 pub mod d05_print_queue;
 pub mod d06_guard_gallivant;
 pub mod d07_bridge_repair;
+pub mod d08_resonant_collinearity;
