@@ -1,4 +1,4 @@
-use crate::utils::{read_lines, Day, Task};
+use crate::utils::{Day, Task, read_lines};
 
 fn parse_file(filename: &str) -> impl Iterator<Item = (u64, Vec<u64>)> {
     read_lines(filename).flat_map(|line| {
@@ -28,9 +28,7 @@ fn p1_two_ops(filename: &str) -> u64 {
 
 #[inline(always)]
 fn next_power_of_ten(x: u64) -> u64 {
-    std::iter::successors(Some(x), |&v| Some(v / 10))
-        .take_while(|&v| v > 0)
-        .fold(1, |acc, _| acc * 10)
+    std::iter::successors(Some(10), |&v| (v <= x).then_some(10 * v)).last().unwrap()
 }
 
 fn p2_three_ops(filename: &str) -> u64 {
@@ -43,7 +41,7 @@ fn p2_three_ops(filename: &str) -> u64 {
                         .take(gaps)
                         .enumerate()
                         .map(|(i, op)| (xs[i + 1], op % 3))
-                        // since all numbers are strictly greater than 0 
+                        // since all numbers are strictly greater than 0
                         // and all ops increase the result
                         .try_fold(xs[0], |acc, (x, op)| match op {
                             _ if acc > target => None,
