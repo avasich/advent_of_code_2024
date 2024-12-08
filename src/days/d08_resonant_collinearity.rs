@@ -42,16 +42,17 @@ fn p1(filename: &str) -> usize {
 
 fn p2(filename: &str) -> usize {
     let (antennas, w, h) = parse_file(filename);
+    let draw_line = |(x, y), (dx, dy)| {
+        std::iter::successors(Some((x, y)), move |&(x, y)| Some((x + dx, y + dy)))
+            .take_while(|(x, y)| (0..w).contains(x) && (0..h).contains(y))
+    };
     antennas
         .values()
         .flat_map(|xys| distinct_pairs(xys))
         .flat_map(|((x1, y1), (x2, y2))| {
-            let (dx, dy) = (x2 - x1, y2 - y1);
             std::iter::chain(
-                std::iter::successors(Some((x1, y1)), move |&(x, y)| Some((x + dx, y + dy)))
-                    .take_while(|(x, y)| (0..w).contains(x) && (0..h).contains(y)),
-                std::iter::successors(Some((x2, y2)), move |&(x, y)| Some((x - dx, y - dy)))
-                    .take_while(|(x, y)| (0..w).contains(x) && (0..h).contains(y)),
+                draw_line((x1, y1), (x2 - x1, y2 - y1)),
+                draw_line((x2, y2), (x1 - x2, y1 - y2)),
             )
         })
         .unique()
