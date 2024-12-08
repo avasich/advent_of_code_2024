@@ -25,14 +25,15 @@ fn parse_file(filename: &str) -> (HashMap<char, Vec<(i32, i32)>>, i32, i32) {
     (map, w, h + 1)
 }
 
+fn distinct_pairs<T: Copy>(arr: &[T]) -> impl Iterator<Item = (T, T)> {
+    (0..arr.len()).flat_map(move |i| (i + 1..arr.len()).map(move |j| (arr[i], arr[j])))
+}
+
 fn p1(filename: &str) -> usize {
     let (antennas, w, h) = parse_file(filename);
-
     antennas
-        .iter()
-        .flat_map(|(_, xys)| {
-            (0..xys.len()).flat_map(move |i| (i + 1..xys.len()).map(move |j| (xys[i], xys[j])))
-        })
+        .values()
+        .flat_map(|xys| distinct_pairs(xys))
         .flat_map(|((x1, y1), (x2, y2))| [(2 * x1 - x2, 2 * y1 - y2), (2 * x2 - x1, 2 * y2 - y1)])
         .filter(|(x, y)| (0..w).contains(x) && (0..h).contains(y))
         .unique()
@@ -41,48 +42,17 @@ fn p1(filename: &str) -> usize {
 
 fn p2(filename: &str) -> usize {
     let (antennas, w, h) = parse_file(filename);
-
     antennas
-        .iter()
-        .flat_map(|(_, xys)| {
-            (0..xys.len()).flat_map(move |i| (i + 1..xys.len()).map(move |j| (xys[i], xys[j])))
-        })
+        .values()
+        .flat_map(|xys| distinct_pairs(xys))
         .flat_map(|((x1, y1), (x2, y2))| {
-            use std::cmp::Ordering::*;
-
-            fn div(a: i32, b: i32) -> i32 {
-                if a % b == 0 { a / b - 1 } else { a / b }
-            }
-
-            let (dx, dy) = ((x2 - x1).abs(), (y2 - y1).abs());
-
-            let (x0, y0, dx, dy, k) = match (x2.cmp(&x1), y2.cmp(&y1)) {
-                (Equal, _) => {
-                    let (x0, y0) = (x1, y1 % dy);
-                    let k = div(h - y0, dy);
-                    (x0, y0, dx, dy, k)
-                }
-                (_, Equal) => {
-                    let (x0, y0) = (x1 % dx, y1);
-                    let k = div(w - x0, dx);
-                    (x0, y0, dx, dy, k)
-                }
-                (Greater, _) => {
-                    let i = std::cmp::min(x1 / dx, y1 / dy);
-                    let (x0, y0) = (x1 - i * dx, y1 - i * dy);
-                    let k = std::cmp::min(div(w - x0, dx), div(h - y0, dy));
-                    (x0, y0, dx, dy, k)
-                }
-                (Less, _) => {
-                    let i = std::cmp::min(x2 / dx, div(h - y2, dy));
-                    let (x0, y0) = (x2 - i * dx, y2 + i * dy);
-                    let k = std::cmp::min(div(w - x0, dx), y0 / dy);
-                    (x0, y0, dx, -dy, k)
-                }
-            };
-
-            std::iter::successors(Some((x0, y0)), move |&(x, y)| Some((x + dx, y + dy)))
-                .take(k as usize + 1)
+            let (dx, dy) = (x2 - x1, y2 - y1);
+            std::iter::chain(
+                std::iter::successors(Some((x1, y1)), move |&(x, y)| Some((x + dx, y + dy)))
+                    .take_while(|(x, y)| (0..w).contains(x) && (0..h).contains(y)),
+                std::iter::successors(Some((x2, y2)), move |&(x, y)| Some((x - dx, y - dy)))
+                    .take_while(|(x, y)| (0..w).contains(x) && (0..h).contains(y)),
+            )
         })
         .unique()
         .count()
@@ -118,14 +88,5 @@ mod d08_tests {
     fn part_2_example_test() {
         let res = SOLUTION.part_2.run_example(0);
         assert_eq!(res, 9);
-    }
-
-    #[test]
-    fn foo() {
-        let m = 99;
-        let a = 110 % m;
-        let b = 110 % -m;
-
-        println!("{a} {b}")
     }
 }
