@@ -1,4 +1,4 @@
-use std::collections::BTreeSet;
+use std::{cmp::Ordering, collections::BinaryHeap};
 
 use itertools::Itertools;
 
@@ -34,22 +34,49 @@ fn p1(filename: &str) -> usize {
     }
 }
 
-// len id
-// type Block = (usize, usize);
+#[derive(Copy, Clone, Eq, PartialEq, Debug)]
+struct File {
+    id: usize,
+    len: usize,
+    pos: usize,
+}
 
-// start len id
-type Files = BTreeSet<(usize, usize, usize)>;
-// len - [positions]
-type EmptyBlocks = Vec<BTreeSet<usize>>;
+impl PartialOrd for File {
+    fn partial_cmp(&self, other: &Self) -> Option<Ordering> {
+        Some(Self::cmp(self, other))
+    }
+}
+
+impl Ord for File {
+    fn cmp(&self, other: &Self) -> Ordering {
+        usize::cmp(&self.pos, &other.pos)
+    }
+}
+
+#[derive(Copy, Clone, Eq, PartialEq, Debug)]
+struct Gap(usize);
+impl Ord for Gap {
+    fn cmp(&self, other: &Self) -> Ordering {
+        usize::cmp(&other.0, &self.0)
+    }
+}
+
+impl PartialOrd for Gap {
+    fn partial_cmp(&self, other: &Self) -> Option<Ordering> {
+        Some(Self::cmp(self, other))
+    }
+}
 
 fn p2_(line: &str) -> usize {
     let (mut files, mut empty, _) =
         line.chars().flat_map(|c| c.to_digit(10)).map(|c| c as usize).enumerate().fold(
-            (BTreeSet::new(), vec![BTreeSet::new(); 10], 0),
-            |(mut files, mut empty, pos): (Files, EmptyBlocks, _), (i, len)| {
+            (BinaryHeap::new(), vec![BinaryHeap::new(); 10], 0),
+            |(mut files, mut empty, pos), (i, len)| {
                 match i % 2 == 0 {
-                    true => files.insert((pos, len, i / 2)),
-                    false => empty[len].insert(pos),
+                    true => files.push(File { id: i / 2, pos, len }),
+                    false => {
+                        empty[len].push(Gap(pos));
+                    }
                 };
 
                 (files, empty, pos + len)
@@ -58,31 +85,25 @@ fn p2_(line: &str) -> usize {
 
     let mut res = 0;
 
-    while let Some(f) = files.iter().last().copied() {
-        let (file_pos, file_len, id) = f;
-
+    while let Some(f) = files.pop() {
         let gap = empty
             .iter_mut()
             .enumerate()
-            .skip(file_len)
-            .filter_map(|(gap_len, gaps)| Some((*gaps.first()?, gap_len, gaps)))
-            .filter(|&(gap_pos, _, _)| gap_pos < file_pos)
-            .min();
+            .skip(f.len)
+            .filter_map(|(gap_len, gaps)| Some((*gaps.peek()?, gap_len, gaps)))
+            .filter(|&(gap_pos, _, _)| gap_pos.0 < f.pos)
+            .max_by_key(|(gap_pos, ..)| *gap_pos);
 
         match gap {
             Some((gap_pos, gap_len, gaps)) => {
-                files.remove(&f);
-                gaps.pop_first();
-                files.insert((gap_pos, file_len, id));
-                let new_len = gap_len - file_len;
+                files.push(File { id: f.id, pos: gap_pos.0, len: f.len });
+                let new_len = gap_len - f.len;
+                gaps.pop();
                 if new_len > 0 {
-                    empty[gap_len - file_len].insert(gap_pos + file_len);
+                    empty[new_len].push(Gap(gap_pos.0 + f.len));
                 }
             }
-            None => {
-                res += id * (2 * file_pos + file_len - 1) * file_len / 2;
-                files.pop_last();
-            }
+            None => res += f.id * (2 * f.pos + f.len - 1) * f.len / 2,
         }
     }
     res
@@ -135,7 +156,7 @@ mod d09_tests {
     #[bench]
     fn p2_1(b: &mut Bencher) {
         let line = read_lines("./inputs/day_09/task.txt").next().unwrap();
-        //2645688
+        //1426371
 
         b.iter(|| black_box(p2_(&line)));
     }
