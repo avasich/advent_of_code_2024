@@ -26,7 +26,7 @@ fn parse_file(filename: &str) -> (HashMap<char, Vec<(i32, i32)>>, i32, i32) {
 }
 
 fn distinct_pairs<T: Copy>(arr: &[T]) -> impl Iterator<Item = (T, T)> {
-    (0..arr.len()).flat_map(move |i| (i + 1..arr.len()).map(move |j| (arr[i], arr[j])))
+    arr.iter().enumerate().flat_map(|(i, &x)| arr[i + 1..].iter().map(move |&y| (x, y)))
 }
 
 fn p1(filename: &str) -> usize {
