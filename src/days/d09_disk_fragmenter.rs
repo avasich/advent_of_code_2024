@@ -74,11 +74,11 @@ fn p2_(line: &str) -> usize {
             |(mut files, mut empty, pos), (i, len)| {
                 match i % 2 == 0 {
                     true => files.push(File { id: i / 2, pos, len }),
-                    false => {
+                    false if pos > 0 => {
                         empty[len].push(Gap(pos));
                     }
+                    _ => {}
                 };
-
                 (files, empty, pos + len)
             },
         );
@@ -95,12 +95,12 @@ fn p2_(line: &str) -> usize {
             .max_by_key(|(gap_pos, ..)| *gap_pos);
 
         match gap {
-            Some((gap_pos, gap_len, gaps)) => {
-                files.push(File { id: f.id, pos: gap_pos.0, len: f.len });
+            Some((gap, gap_len, gaps)) => {
+                files.push(File { id: f.id, pos: gap.0, len: f.len });
                 let new_len = gap_len - f.len;
                 gaps.pop();
                 if new_len > 0 {
-                    empty[new_len].push(Gap(gap_pos.0 + f.len));
+                    empty[new_len].push(Gap(gap.0 + f.len));
                 }
             }
             None => res += f.id * (2 * f.pos + f.len - 1) * f.len / 2,
@@ -114,16 +114,9 @@ fn p2(filename: &str) -> usize {
 }
 
 pub const SOLUTION: Day<usize, usize> = Day {
-    part_1: Task {
-        examples: &["./inputs/day_09/example_1.txt", "./inputs/day_09/example_2.txt"],
-        task: "./inputs/day_09/task.txt",
-        func: p1,
-    },
-    part_2: Task {
-        examples: &["./inputs/day_09/example_2.txt", "./inputs/day_09/example_3.txt"],
-        task: "./inputs/day_09/task.txt",
-        func: p2,
-    },
+    day: 9,
+    part_1: Task { examples: &["example_1.txt", "example_2.txt"], func: p1 },
+    part_2: Task { examples: &["example_2.txt", "example_3.txt"], func: p2 },
 };
 
 #[cfg(test)]
@@ -137,19 +130,19 @@ mod d09_tests {
 
     #[test]
     fn p1_example_test() {
-        let res = SOLUTION.part_1.run_example(0);
+        let res = SOLUTION.run_example_1(0);
         assert_eq!(res, 60);
-        let res = SOLUTION.part_1.run_example(1);
+        let res = SOLUTION.run_example_1(1);
         assert_eq!(res, 1928);
     }
 
     #[test]
     fn p2_example_test() {
         // 6408966547049 yay!
-        let res = SOLUTION.part_2.run_example(0);
+        let res = SOLUTION.run_example_2(0);
         assert_eq!(res, 2858);
 
-        let res = SOLUTION.part_2.run_example(1);
+        let res = SOLUTION.run_example_2(1);
         assert_eq!(res, 2900);
     }
 

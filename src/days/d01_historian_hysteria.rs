@@ -28,16 +28,9 @@ fn p2_similarity_score(filename: &str) -> u32 {
 }
 
 pub const SOLUTION: Day<u32, u32> = Day {
-    part_1: Task {
-        examples: &["./inputs/day_01/example.txt"],
-        task: "./inputs/day_01/task.txt",
-        func: p1_list_distance,
-    },
-    part_2: Task {
-        examples: &["./inputs/day_01/example.txt"],
-        task: "./inputs/day_01/task.txt",
-        func: p2_similarity_score,
-    },
+    day: 1,
+    part_1: Task { examples: &["example.txt"], func: p1_list_distance },
+    part_2: Task { examples: &["example.txt"], func: p2_similarity_score },
 };
 
 #[cfg(test)]
@@ -46,13 +39,13 @@ mod d01_tests {
 
     #[test]
     fn p1_example_test() {
-        let res = SOLUTION.part_1.run_example(0);
+        let res = SOLUTION.run_example_1(0);
         assert_eq!(res, 11);
     }
 
     #[test]
     fn p2_example_test() {
-        let res = SOLUTION.part_2.run_example(0);
+        let res = SOLUTION.run_example_2(0);
         assert_eq!(res, 31);
     }
 }

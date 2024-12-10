@@ -61,24 +61,17 @@ fn count(chars: impl Iterator<Item = char>) -> usize {
 }
 
 pub const SOLUTION: Day<usize, usize> = Day {
+    day: 4,
     part_1: Task {
         examples: &[
-            "./inputs/day_04/example_0_letters.txt",
-            "./inputs/day_04/example_0_dots_p1.txt",
-            "./inputs/day_04/example_1_letters.txt",
-            "./inputs/day_04/example_1_dots_p1.txt",
+            "example_0_letters.txt",
+            "example_0_dots_p1.txt",
+            "example_1_letters.txt",
+            "example_1_dots_p1.txt",
         ],
-        task: "./inputs/day_04/task.txt",
         func: p1_count_xmas,
     },
-    part_2: Task {
-        examples: &[
-            "./inputs/day_04/example_0_letters.txt",
-            "./inputs/day_04/example_0_dots_p2.txt",
-        ],
-        task: "./inputs/day_04/task.txt",
-        func: p2_cross,
-    },
+    part_2: Task { examples: &["example_0_letters.txt", "example_0_dots_p2.txt"], func: p2_cross },
 };
 
 #[cfg(test)]
@@ -97,13 +90,13 @@ mod d04_tests {
 
     #[test]
     fn p1_example_test() {
-        let res = SOLUTION.part_1.run_example(0);
+        let res = SOLUTION.run_example_1(0);
         assert_eq!(res, 18);
     }
 
     #[test]
     fn p2_example_test() {
-        let res = SOLUTION.part_2.run_example(0);
+        let res = SOLUTION.run_example_2(0);
         assert_eq!(res, 9);
     }
 }

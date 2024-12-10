@@ -60,16 +60,9 @@ fn p2(filename: &str) -> usize {
 }
 
 pub const SOLUTION: Day<usize, usize> = Day {
-    part_1: Task {
-        examples: &["./inputs/day_08/example_p1_1.txt", "./inputs/day_08/example_p1_2.txt"],
-        task: "./inputs/day_08/task.txt",
-        func: p1,
-    },
-    part_2: Task {
-        examples: &["./inputs/day_08/example_p2.txt"],
-        task: "./inputs/day_08/task.txt",
-        func: p2,
-    },
+    day: 8,
+    part_1: Task { examples: &["example_p1_1.txt", "example_p1_2.txt"], func: p1 },
+    part_2: Task { examples: &["example_p2.txt"], func: p2 },
 };
 
 #[cfg(test)]
@@ -78,16 +71,16 @@ mod d08_tests {
 
     #[test]
     fn part_1_example_test() {
-        let res = SOLUTION.part_1.run_example(0);
+        let res = SOLUTION.run_example_1(0);
         assert_eq!(res, 14);
 
-        let res = SOLUTION.part_1.run_example(1);
+        let res = SOLUTION.run_example_1(1);
         assert_eq!(res, 4);
     }
 
     #[test]
     fn part_2_example_test() {
-        let res = SOLUTION.part_2.run_example(0);
+        let res = SOLUTION.run_example_2(0);
         assert_eq!(res, 9);
     }
 }

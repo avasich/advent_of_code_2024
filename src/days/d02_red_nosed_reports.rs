@@ -66,16 +66,9 @@ fn with_error_allowed(xs: &[i32], skip: Option<usize>) -> bool {
 }
 
 pub const SOLUTION: Day<usize, usize> = Day {
-    part_1: Task {
-        examples: &["./inputs/day_02/example.txt"],
-        task: "./inputs/day_02/task.txt",
-        func: p1_count_safe,
-    },
-    part_2: Task {
-        examples: &["./inputs/day_02/example.txt"],
-        task: "./inputs/day_02/task.txt",
-        func: p2_count_safe_allow_error,
-    },
+    day: 2,
+    part_1: Task { examples: &["example.txt"], func: p1_count_safe },
+    part_2: Task { examples: &["example.txt"], func: p2_count_safe_allow_error },
 };
 
 #[cfg(test)]

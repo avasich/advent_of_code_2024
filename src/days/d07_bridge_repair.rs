@@ -58,16 +58,9 @@ fn p2_three_ops(filename: &str) -> u64 {
 }
 
 pub const SOLUTION: Day<u64, u64> = Day {
-    part_1: Task {
-        examples: &["./inputs/day_07/example.txt"],
-        task: "./inputs/day_07/task.txt",
-        func: p1_two_ops,
-    },
-    part_2: Task {
-        examples: &["./inputs/day_07/example.txt"],
-        task: "./inputs/day_07/task.txt",
-        func: p2_three_ops,
-    },
+    day: 7,
+    part_1: Task { examples: &["example.txt"], func: p1_two_ops },
+    part_2: Task { examples: &["example.txt"], func: p2_three_ops },
 };
 
 #[cfg(test)]
@@ -76,13 +69,13 @@ mod d07_tests {
 
     #[test]
     fn p1_example_test() {
-        let res = SOLUTION.part_1.run_example(0);
+        let res = SOLUTION.run_example_1(0);
         assert_eq!(res, 3749);
     }
 
     #[test]
     fn p2_example_test() {
-        let res = SOLUTION.part_2.run_example(0);
+        let res = SOLUTION.run_example_2(0);
         assert_eq!(res, 11387);
     }
 }

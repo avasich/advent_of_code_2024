@@ -2,7 +2,7 @@ use std::collections::HashSet;
 
 use itertools::Itertools;
 
-use crate::utils::{read_lines, Day, Task};
+use crate::utils::{Day, Task, read_lines};
 
 #[rustfmt::skip]
 #[derive(Copy, Clone)]
@@ -131,16 +131,9 @@ fn p2_add_obstacle(tiles: &mut [Vec<Tile>], start: Guard) -> usize {
 }
 
 pub const SOLUTION: Day<usize, usize> = Day {
-    part_1: Task {
-        examples: &["./inputs/day_06/example.txt"],
-        task: "./inputs/day_06/task.txt",
-        func: p1,
-    },
-    part_2: Task {
-        examples: &["./inputs/day_06/example.txt"],
-        task: "./inputs/day_06/task.txt",
-        func: p2,
-    },
+    day: 6,
+    part_1: Task { examples: &["example.txt"], func: p1 },
+    part_2: Task { examples: &["example.txt"], func: p2 },
 };
 
 #[cfg(test)]
@@ -149,13 +142,13 @@ mod d06_tests {
 
     #[test]
     fn p1_example_test() {
-        let res = SOLUTION.part_1.run_example(0);
+        let res = SOLUTION.run_example_1(0);
         assert_eq!(res, 41);
     }
 
     #[test]
     fn p2_example_test() {
-        let res = SOLUTION.part_2.run_example(0);
+        let res = SOLUTION.run_example_2(0);
         assert_eq!(res, 6);
     }
 }
