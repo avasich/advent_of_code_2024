@@ -1,7 +1,7 @@
 use std::{cmp::Ordering, collections::BinaryHeap};
 
 use itertools::Itertools;
-
+use crate::day;
 use crate::utils::{Day, Task, read_lines};
 
 fn p1(filename: &str) -> usize {
@@ -113,10 +113,9 @@ fn p2(filename: &str) -> usize {
     p2_(&read_lines(filename).next().unwrap())
 }
 
-pub const SOLUTION: Day<usize, usize> = Day {
-    day: 9,
-    part_1: Task { examples: &["example_1.txt", "example_2.txt"], func: p1 },
-    part_2: Task { examples: &["example_2.txt", "example_3.txt"], func: p2 },
+pub const SOLUTION: Day<usize, usize> = day! { 9,
+    part_1: { examples: ["example_1.txt", "example_2.txt"], func: p1 },
+    part_2: { examples: ["example_2.txt", "example_3.txt"], func: p2 }
 };
 
 #[cfg(test)]
@@ -130,19 +129,19 @@ mod d09_tests {
 
     #[test]
     fn p1_example_test() {
-        let res = SOLUTION.run_example_1(0);
+        let res = SOLUTION.part_1.run_example(0);
         assert_eq!(res, 60);
-        let res = SOLUTION.run_example_1(1);
+        let res = SOLUTION.part_1.run_example(1);
         assert_eq!(res, 1928);
     }
 
     #[test]
     fn p2_example_test() {
         // 6408966547049 yay!
-        let res = SOLUTION.run_example_2(0);
+        let res = SOLUTION.part_2.run_example(0);
         assert_eq!(res, 2858);
 
-        let res = SOLUTION.run_example_2(1);
+        let res = SOLUTION.part_2.run_example(1);
         assert_eq!(res, 2900);
     }
 

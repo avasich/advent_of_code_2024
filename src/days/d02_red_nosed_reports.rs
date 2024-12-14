@@ -1,5 +1,5 @@
 use Kind::*;
-
+use crate::day;
 use crate::utils::{Day, Task, read_lines};
 
 #[derive(Copy, Clone, Debug)]
@@ -65,10 +65,9 @@ fn with_error_allowed(xs: &[i32], skip: Option<usize>) -> bool {
     }
 }
 
-pub const SOLUTION: Day<usize, usize> = Day {
-    day: 2,
-    part_1: Task { examples: &["example.txt"], func: p1_count_safe },
-    part_2: Task { examples: &["example.txt"], func: p2_count_safe_allow_error },
+pub const SOLUTION: Day<usize, usize> = day! { 2,
+    part_1: { examples: ["example.txt"], func: p1_count_safe },
+    part_2: { examples: ["example.txt"], func: p2_count_safe_allow_error }
 };
 
 #[cfg(test)]

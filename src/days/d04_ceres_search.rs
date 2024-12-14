@@ -1,4 +1,7 @@
-use crate::utils::{Day, Task, read_lines};
+use crate::{
+    day,
+    utils::{read_lines, Day, Task},
+};
 
 fn p1_count_xmas(filename: &str) -> usize {
     let cs: Vec<Vec<_>> = read_lines(filename).map(|line| line.chars().collect()).collect();
@@ -60,18 +63,16 @@ fn count(chars: impl Iterator<Item = char>) -> usize {
     res
 }
 
-pub const SOLUTION: Day<usize, usize> = Day {
-    day: 4,
-    part_1: Task {
-        examples: &[
+pub const SOLUTION: Day<usize, usize> = day! { 4,
+    part_1: {
+        examples: [
             "example_0_letters.txt",
             "example_0_dots_p1.txt",
             "example_1_letters.txt",
-            "example_1_dots_p1.txt",
-        ],
-        func: p1_count_xmas,
+            "example_1_dots_p1.txt"],
+        func: p1_count_xmas
     },
-    part_2: Task { examples: &["example_0_letters.txt", "example_0_dots_p2.txt"], func: p2_cross },
+    part_2: { examples: ["example_0_letters.txt", "example_0_dots_p2.txt"], func: p2_cross }
 };
 
 #[cfg(test)]
@@ -90,13 +91,13 @@ mod d04_tests {
 
     #[test]
     fn p1_example_test() {
-        let res = SOLUTION.run_example_1(0);
+        let res = SOLUTION.part_1.run_example(0);
         assert_eq!(res, 18);
     }
 
     #[test]
     fn p2_example_test() {
-        let res = SOLUTION.run_example_2(0);
+        let res = SOLUTION.part_2.run_example(0);
         assert_eq!(res, 9);
     }
 }

@@ -10,24 +10,53 @@ pub fn read_lines<P: AsRef<Path>>(filename: P) -> impl Iterator<Item = String> {
     io::BufReader::new(file).lines().flatten()
 }
 
-pub struct Task<'a, Out>
-where
-    Out: std::fmt::Display,
-{
-    pub func: fn(&str) -> Out,
-    pub examples: &'a [&'a str],
+#[macro_export]
+macro_rules! day {
+    ($day:expr,
+     part_1: { examples: [$($file1:expr),* $(,)?], func: $func1:expr $(,)? },
+     part_2: { examples: [$($file2:expr),* $(,)?], func: $func2:expr $(,)? }
+    ) => {
+        Day {
+            day: $day,
+            part_1: Task {
+                examples: match $day {
+                    ..10 => &[$(concat!("./inputs/day_0", stringify!($day), "/", $file1)),*],
+                    10.. => &[$(concat!("./inputs/day_", stringify!($day), "/", $file1)),*],
+                },
+                task: match $day {
+                    ..10 => concat!("./inputs/day_0", stringify!($day), "/task.txt"),
+                    10.. => concat!("./inputs/day_", stringify!($day), "/task.txt"),
+                },
+                func: $func1,
+            },
+            part_2: Task {
+                examples: match $day {
+                    ..10 => &[$(concat!("./inputs/day_0", stringify!($day), "/", $file2)),*],
+                    10.. => &[$(concat!("./inputs/day_", stringify!($day), "/", $file2)),*],
+                },
+                task: match $day {
+                    ..10 => concat!("./inputs/day_0", stringify!($day), "/task.txt"),
+                    10.. => concat!("./inputs/day_", stringify!($day), "/task.txt"),
+                },
+                func: $func2,
+        }
+        }
+    };
 }
 
-impl<'a, Out> Task<'a, Out>
-where
-    Out: std::fmt::Display,
-{
-    fn run(&self, filename: &str) -> Out {
-        (self.func)(filename)
+pub struct Task<'a, Out: std::fmt::Display> {
+    pub examples: &'a [&'a str],
+    pub task: &'a str,
+    pub func: fn(&str) -> Out,
+}
+
+impl<Out: std::fmt::Display> Task<'_, Out> {
+    pub fn run_example(&self, n: usize) -> Out {
+        (self.func)(self.examples[n])
     }
 
-    pub const fn new(examples: &'a [&'a str], func: fn(&str) -> Out) -> Self {
-        Self { func, examples }
+    pub fn run_task(&self) -> Out {
+        (self.func)(self.task)
     }
 }
 
@@ -37,35 +66,8 @@ where
     Out2: std::fmt::Display,
 {
     pub day: usize,
-
     pub part_1: Task<'a, Out1>,
     pub part_2: Task<'a, Out2>,
-}
-
-impl<Out1, Out2> Day<'_, Out1, Out2>
-where
-    Out1: std::fmt::Display,
-    Out2: std::fmt::Display,
-{
-    fn run_part<Out: std::fmt::Display>(&self, part: &Task<Out>, file: &str) -> Out {
-        part.run(&format!("./inputs/day_{:02}/{}", self.day, file))
-    }
-
-    pub fn run_example_1(&self, n: usize) -> Out1 {
-        self.run_part(&self.part_1, self.part_1.examples[n])
-    }
-
-    pub fn run_task_1(&self) -> Out1 {
-        self.run_part(&self.part_1, "task.txt")
-    }
-
-    pub fn run_example_2(&self, n: usize) -> Out2 {
-        self.run_part(&self.part_2, self.part_2.examples[n])
-    }
-
-    pub fn run_task_2(&self) -> Out2 {
-        self.run_part(&self.part_2, "task.txt")
-    }
 }
 
 pub trait Solution {
@@ -79,12 +81,12 @@ where
     Out2: std::fmt::Display,
 {
     fn run_part_1(&self) {
-        let res = self.run_task_1();
-        println!("{res}");
+        let res = self.part_1.run_task();
+        println!("part 1: {res}");
     }
 
     fn run_part_2(&self) {
-        let res = self.run_task_2();
-        println!("{res}");
+        let res = self.part_2.run_task();
+        println!("part 2: {res}");
     }
 }

@@ -1,7 +1,7 @@
 use std::collections::HashMap;
 
 use itertools::Itertools;
-
+use crate::day;
 use crate::utils::{Day, Task, read_lines};
 
 #[allow(clippy::type_complexity)]
@@ -59,10 +59,9 @@ fn p2(filename: &str) -> usize {
         .count()
 }
 
-pub const SOLUTION: Day<usize, usize> = Day {
-    day: 8,
-    part_1: Task { examples: &["example_p1_1.txt", "example_p1_2.txt"], func: p1 },
-    part_2: Task { examples: &["example_p2.txt"], func: p2 },
+pub const SOLUTION: Day<usize, usize> = day! { 8,
+    part_1: { examples: ["example_p1_1.txt", "example_p1_2.txt"], func: p1 },
+    part_2: { examples: ["example_p2.txt"], func: p2 }
 };
 
 #[cfg(test)]
@@ -71,16 +70,16 @@ mod d08_tests {
 
     #[test]
     fn part_1_example_test() {
-        let res = SOLUTION.run_example_1(0);
+        let res = SOLUTION.part_1.run_example(0);
         assert_eq!(res, 14);
 
-        let res = SOLUTION.run_example_1(1);
+        let res = SOLUTION.part_1.run_example(1);
         assert_eq!(res, 4);
     }
 
     #[test]
     fn part_2_example_test() {
-        let res = SOLUTION.run_example_2(0);
+        let res = SOLUTION.part_2.run_example(0);
         assert_eq!(res, 9);
     }
 }

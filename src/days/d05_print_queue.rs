@@ -3,7 +3,10 @@ use std::{
     collections::{HashMap, HashSet},
 };
 
-use crate::utils::{Day, Task, read_lines};
+use crate::{
+    day,
+    utils::{Day, Task, read_lines},
+};
 
 fn check_nums(nums: &[u32], cmp: &HashMap<(u32, u32), Ordering>) -> bool {
     let mut found = HashSet::new();
@@ -55,10 +58,9 @@ fn p2(filename: &str) -> u32 {
         .sum()
 }
 
-pub const SOLUTION: Day<u32, u32> = Day {
-    day: 5,
-    part_1: Task { examples: &["example.txt"], func: p1 },
-    part_2: Task { examples: &["example.txt"], func: p2 },
+pub const SOLUTION: Day<u32, u32> = day! { 5,
+    part_1: { examples: ["example.txt"], func: p1 },
+    part_2: { examples: ["example.txt"], func: p2 }
 };
 
 #[cfg(test)]
@@ -67,13 +69,13 @@ mod d05_tests {
 
     #[test]
     fn p1_example_test() {
-        let res = SOLUTION.run_example_1(0);
+        let res = SOLUTION.part_1.run_example(0);
         assert_eq!(res, 143);
     }
 
     #[test]
     fn p2_example_test() {
-        let res = SOLUTION.run_example_2(0);
+        let res = SOLUTION.part_2.run_example(0);
         assert_eq!(res, 123);
     }
 }

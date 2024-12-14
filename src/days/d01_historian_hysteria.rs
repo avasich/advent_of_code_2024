@@ -1,6 +1,9 @@
 use std::collections::HashMap;
 
-use crate::utils::{Day, Task, read_lines};
+use crate::{
+    day,
+    utils::{read_lines, Day, Task},
+};
 
 fn parse_file(filename: &str) -> (Vec<u32>, Vec<u32>) {
     read_lines(filename)
@@ -27,10 +30,9 @@ fn p2_similarity_score(filename: &str) -> u32 {
     fst.iter().flat_map(|x| snd_counts.get(x).map(|y| x * y)).sum()
 }
 
-pub const SOLUTION: Day<u32, u32> = Day {
-    day: 1,
-    part_1: Task { examples: &["example.txt"], func: p1_list_distance },
-    part_2: Task { examples: &["example.txt"], func: p2_similarity_score },
+pub const SOLUTION: Day<u32, u32> = day! { 1,
+    part_1: { examples: ["example.txt"], func: p1_list_distance },
+    part_2: { examples: ["example.txt"], func: p2_similarity_score }
 };
 
 #[cfg(test)]
@@ -39,13 +41,13 @@ mod d01_tests {
 
     #[test]
     fn p1_example_test() {
-        let res = SOLUTION.run_example_1(0);
+        let res = SOLUTION.part_1.run_example(0);
         assert_eq!(res, 11);
     }
 
     #[test]
     fn p2_example_test() {
-        let res = SOLUTION.run_example_2(0);
+        let res = SOLUTION.part_2.run_example(0);
         assert_eq!(res, 31);
     }
 }

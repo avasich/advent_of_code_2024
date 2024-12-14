@@ -1,3 +1,4 @@
+use crate::day;
 use crate::utils::{Day, Task, read_lines};
 
 fn parse_file(filename: &str) -> impl Iterator<Item = (u64, Vec<u64>)> {
@@ -57,10 +58,9 @@ fn p2_three_ops(filename: &str) -> u64 {
         .sum()
 }
 
-pub const SOLUTION: Day<u64, u64> = Day {
-    day: 7,
-    part_1: Task { examples: &["example.txt"], func: p1_two_ops },
-    part_2: Task { examples: &["example.txt"], func: p2_three_ops },
+pub const SOLUTION: Day<u64, u64> = day! { 7,
+    part_1: { examples: ["example.txt"], func: p1_two_ops },
+    part_2: { examples: ["example.txt"], func: p2_three_ops }
 };
 
 #[cfg(test)]
@@ -69,13 +69,13 @@ mod d07_tests {
 
     #[test]
     fn p1_example_test() {
-        let res = SOLUTION.run_example_1(0);
+        let res = SOLUTION.part_1.run_example(0);
         assert_eq!(res, 3749);
     }
 
     #[test]
     fn p2_example_test() {
-        let res = SOLUTION.run_example_2(0);
+        let res = SOLUTION.part_2.run_example(0);
         assert_eq!(res, 11387);
     }
 }
