@@ -14,7 +14,7 @@ pub fn read_lines<P: AsRef<Path>>(filename: P) -> impl Iterator<Item = String> {
 macro_rules! day {
     ($day:expr,
      part_1: { examples: [$($file1:expr),* $(,)?], func: $func1:expr $(,)? },
-     part_2: { examples: [$($file2:expr),* $(,)?], func: $func2:expr $(,)? }
+     part_2: { examples: [$($file2:expr),* $(,)?], func: $func2:expr $(,)? } $(,)?
     ) => {
         Day {
             day: $day,
