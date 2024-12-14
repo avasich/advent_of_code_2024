@@ -8,3 +8,4 @@ pub mod d07_bridge_repair;
 pub mod d08_resonant_collinearity;
 pub mod d09_disk_fragmenter;
 pub mod d10_hoof_it;
+pub mod d11_plutonian_pebbles;
