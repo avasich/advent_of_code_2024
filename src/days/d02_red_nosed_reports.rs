@@ -1,6 +1,9 @@
 use Kind::*;
-use crate::day;
-use crate::utils::{Day, Task, read_lines};
+
+use crate::{
+    day,
+    utils::{Day, Task, read_lines},
+};
 
 #[derive(Copy, Clone, Debug)]
 enum Kind {

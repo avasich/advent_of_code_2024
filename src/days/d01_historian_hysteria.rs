@@ -2,7 +2,7 @@ use std::collections::HashMap;
 
 use crate::{
     day,
-    utils::{read_lines, Day, Task},
+    utils::{Day, Task, read_lines},
 };
 
 fn parse_file(filename: &str) -> (Vec<u32>, Vec<u32>) {

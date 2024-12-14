@@ -1,8 +1,11 @@
 use std::{cmp::Ordering, collections::BinaryHeap};
 
 use itertools::Itertools;
-use crate::day;
-use crate::utils::{Day, Task, read_lines};
+
+use crate::{
+    day,
+    utils::{Day, Task, read_lines},
+};
 
 fn p1(filename: &str) -> usize {
     let mut arr = read_lines(filename)

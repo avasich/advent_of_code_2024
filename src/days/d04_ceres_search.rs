@@ -1,6 +1,6 @@
 use crate::{
     day,
-    utils::{read_lines, Day, Task},
+    utils::{Day, Task, read_lines},
 };
 
 fn p1_count_xmas(filename: &str) -> usize {

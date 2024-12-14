@@ -1,8 +1,11 @@
 use std::collections::HashMap;
 
 use itertools::Itertools;
-use crate::day;
-use crate::utils::{Day, Task, read_lines};
+
+use crate::{
+    day,
+    utils::{Day, Task, read_lines},
+};
 
 #[allow(clippy::type_complexity)]
 fn parse_file(filename: &str) -> (HashMap<char, Vec<(i32, i32)>>, i32, i32) {

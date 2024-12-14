@@ -1,5 +1,7 @@
-use crate::day;
-use crate::utils::{Day, Task, read_lines};
+use crate::{
+    day,
+    utils::{Day, Task, read_lines},
+};
 
 fn parse_file(filename: &str) -> impl Iterator<Item = (u64, Vec<u64>)> {
     read_lines(filename).flat_map(|line| {

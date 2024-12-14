@@ -1,5 +1,7 @@
-use crate::day;
-use crate::utils::{Day, Task};
+use crate::{
+    day,
+    utils::{Day, Task},
+};
 
 fn p1(filename: &str) -> u64 {
     0

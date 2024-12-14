@@ -1,8 +1,11 @@
 use std::collections::HashSet;
 
 use itertools::Itertools;
-use crate::day;
-use crate::utils::{Day, Task, read_lines};
+
+use crate::{
+    day,
+    utils::{Day, Task, read_lines},
+};
 
 #[rustfmt::skip]
 #[derive(Copy, Clone)]
