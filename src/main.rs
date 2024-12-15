@@ -5,6 +5,7 @@ fn main() {
 fn run_day(day_number: usize) {
     use advent_of_code_2024::{days::*, utils::Solution};
 
+    #[allow(clippy::zero_prefixed_literal)]
     let solution: Box<dyn Solution> = match day_number {
         01 => Box::new(d01_historian_hysteria::SOLUTION),
         02 => Box::new(d02_red_nosed_reports::SOLUTION),
