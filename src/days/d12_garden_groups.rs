@@ -4,7 +4,7 @@ use itertools::Itertools;
 
 use crate::{
     day,
-    utils::{read_lines, Day, Task},
+    utils::{Day, Task, read_lines},
 };
 
 type Intervals = Vec<(usize, usize)>;
@@ -101,6 +101,8 @@ fn intersection_length(a: &[(usize, usize)], b: &[(usize, usize)]) -> usize {
 }
 
 fn sides_change(a: &[(usize, usize)], b: &[(usize, usize)]) -> usize {
+    use std::cmp::Ordering;
+
     let (mut i, mut j) = (0, 0);
     let mut res = 0;
 
@@ -108,23 +110,19 @@ fn sides_change(a: &[(usize, usize)], b: &[(usize, usize)]) -> usize {
         let (start_a, end_a) = a[i];
         let (start_b, end_b) = b[j];
 
-        use std::cmp::Ordering;
-        match (start_a.cmp(&start_b), end_a.cmp(&end_b)) {
-            (Ordering::Equal, Ordering::Equal) => {
-                // ...aaaaaaa...
-                // ...bbbbbbb...
-                res += 4;
-            }
-            (Ordering::Equal, _) | (_, Ordering::Equal) => {
-                //  ..aaaaaa.......  ..aaaaaaaaaaa..
-                //  ..bbbbbbbbbbb..  ..bbbbbb.......
+        res += match (start_a.cmp(&start_b), end_a.cmp(&end_b)) {
+            // ...aaaaaaa...
+            // ...bbbbbbb...
+            (Ordering::Equal, Ordering::Equal) => 4,
 
-                //  .......aaaaaa..   ..aaaaaaaaaaa..
-                //  ..bbbbbbbbbbb..   .......bbbbbb..
-                res += 2;
-            }
-            _ => {}
-        }
+            //  ..aaaaaa.......  .......aaaaaa..  
+            //  ..bbbbbbbbbbb..  ..bbbbbbbbbbb..  
+            
+            //  ..aaaaaaaaaaa..  ..aaaaaaaaaaa..
+            //  .......bbbbbb..  ..bbbbbb.......
+            (Ordering::Equal, _) | (_, Ordering::Equal) => 2,
+            _ => 0,
+        };
 
         match end_a < end_b {
             true => i += 1,

@@ -10,3 +10,4 @@ pub mod d09_disk_fragmenter;
 pub mod d10_hoof_it;
 pub mod d11_plutonian_pebbles;
 pub mod d12_garden_groups;
+pub mod d13_claw_contraption;
