@@ -1,10 +1,10 @@
-use std::collections::{HashMap, VecDeque};
+use std::collections::VecDeque;
 
 use itertools::Itertools;
 
 use crate::{
     day,
-    utils::{Day, Task, read_lines},
+    utils::{read_lines, Day, Task},
 };
 
 type Intervals = Vec<(usize, usize)>;
@@ -16,7 +16,7 @@ fn extract_area(
     let c = map[y0][x0]?;
     let (w, h) = (map[0].len(), map.len());
 
-    let mut res: HashMap<_, Vec<_>> = HashMap::new();
+    let mut points = vec![];
     let mut q = VecDeque::new();
     q.push_back((x0, y0));
 
@@ -26,7 +26,7 @@ fn extract_area(
         }
         map[y][x].take();
 
-        res.entry(y).or_default().push(x);
+        points.push((y, x));
 
         if x > 0 {
             q.push_back((x - 1, y));
@@ -42,29 +42,36 @@ fn extract_area(
         }
     }
 
-    let res: Vec<(_, Vec<_>)> = res
-        .into_iter()
-        .map(|(y, mut v)| {
-            v.sort();
+    points.sort();
 
-            let mut intervals = vec![];
-            let (mut start, mut curr) = (v[0], v[0]);
+    let res = std::iter::successors(Some(0), |&start| {
+        match points[start..].iter().find_position(|&&(y, _)| points[start].0 != y) {
+            _ if start >= points.len() => None,
+            None => Some(points.len()),
+            Some((i, _)) => Some(start + i),
+        }
+    })
+    .tuple_windows()
+    .map(|(i, j)| &points[i..j])
+    .map(|arr| {
+        let (y, x0) = arr[0];
+        let mut intervals = vec![];
+        let (mut start, mut curr) = (x0, x0);
 
-            for &x in &v[1..] {
-                match x == curr + 1 {
-                    true => curr += 1,
-                    false => {
-                        intervals.push((start, curr));
-                        (start, curr) = (x, x);
-                    }
+        for &(_, x) in &arr[1..] {
+            match x == curr + 1 {
+                true => curr += 1,
+                false => {
+                    intervals.push((start, curr));
+                    (start, curr) = (x, x);
                 }
             }
+        }
 
-            intervals.push((start, curr));
-            (y, intervals)
-        })
-        .sorted_by_key(|&(y, _)| y)
-        .collect();
+        intervals.push((start, curr));
+        (y, intervals)
+    })
+    .collect();
 
     Some(res)
 }
@@ -220,7 +227,5 @@ mod d12_tests {
     }
 
     #[test]
-    fn playground() {
-        p2(SOLUTION.part_2.examples[1]);
-    }
+    fn playground() {}
 }
