@@ -1,5 +1,5 @@
 fn main() {
-    run_day(11);
+    run_day(12);
 }
 
 fn run_day(day_number: usize) {

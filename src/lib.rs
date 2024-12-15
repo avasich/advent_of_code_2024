@@ -3,6 +3,7 @@
 #![feature(iter_chain)]
 #![feature(test)]
 #![feature(try_find)]
+#![feature(array_windows)]
 extern crate core;
 
 pub mod days;
