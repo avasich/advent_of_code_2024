@@ -11,3 +11,4 @@ pub mod d10_hoof_it;
 pub mod d11_plutonian_pebbles;
 pub mod d12_garden_groups;
 pub mod d13_claw_contraption;
+pub mod d14_restroom_redoubt;

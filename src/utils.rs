@@ -70,7 +70,7 @@ where
     pub part_2: Task<'a, Out2>,
 }
 
-pub trait Solution: Send + Sync {
+pub trait Solution {
     fn run_part_1(&self);
     fn run_part_2(&self);
     fn boxed(self) -> Box<dyn Solution>

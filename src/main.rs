@@ -1,5 +1,5 @@
 fn main() {
-    run_day(13);
+    run_day(14);
 }
 
 fn run_day(day_number: usize) {
@@ -20,6 +20,7 @@ fn run_day(day_number: usize) {
         11 => d11_plutonian_pebbles::SOLUTION.boxed(),
         12 => d12_garden_groups::SOLUTION.boxed(),
         13 => d13_claw_contraption::SOLUTION.boxed(),
+        14 => d14_restroom_redoubt::SOLUTION.boxed(),
         _ => unreachable!(),
     };
 
