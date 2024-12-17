@@ -44,6 +44,7 @@ fn p1(filename: &str) -> usize {
     .iter()
     .product()
 }
+
 fn p2(filename: &str) -> usize {
     let ((w, h, _), iter) = parse_file(filename);
     let robots = iter.collect_vec();

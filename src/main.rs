@@ -1,10 +1,10 @@
+use advent_of_code_2024::{days::*, utils::Solution};
+
 fn main() {
-    run_day(14);
+    run_day(15);
 }
 
 fn run_day(day_number: usize) {
-    use advent_of_code_2024::{days::*, utils::Solution};
-
     #[allow(clippy::zero_prefixed_literal)]
     let solution = match day_number {
         01 => d01_historian_hysteria::SOLUTION.boxed(),
@@ -21,6 +21,7 @@ fn run_day(day_number: usize) {
         12 => d12_garden_groups::SOLUTION.boxed(),
         13 => d13_claw_contraption::SOLUTION.boxed(),
         14 => d14_restroom_redoubt::SOLUTION.boxed(),
+        15 => d15_warehouse_woes::SOLUTION.boxed(),
         _ => unreachable!(),
     };
 

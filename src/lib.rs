@@ -5,6 +5,7 @@
 #![feature(try_find)]
 #![feature(array_windows)]
 #![feature(iter_array_chunks)]
+#![feature(anonymous_lifetime_in_impl_trait)]
 extern crate core;
 
 pub mod days;
