@@ -73,12 +73,6 @@ where
 pub trait Solution {
     fn run_part_1(&self);
     fn run_part_2(&self);
-    fn boxed(self) -> Box<dyn Solution>
-    where
-        Self: Sized + 'static,
-    {
-        Box::new(self)
-    }
 }
 
 impl<Out1, Out2> Solution for Day<'_, Out1, Out2>

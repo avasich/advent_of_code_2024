@@ -1,27 +1,27 @@
 use advent_of_code_2024::{days::*, utils::Solution};
 
 fn main() {
-    run_day(15);
+    run_day(16);
 }
 
 fn run_day(day_number: usize) {
-    #[allow(clippy::zero_prefixed_literal)]
-    let solution = match day_number {
-        01 => d01_historian_hysteria::SOLUTION.boxed(),
-        02 => d02_red_nosed_reports::SOLUTION.boxed(),
-        03 => d03_mull_it_over::SOLUTION.boxed(),
-        04 => d04_ceres_search::SOLUTION.boxed(),
-        05 => d05_print_queue::SOLUTION.boxed(),
-        06 => d06_guard_gallivant::SOLUTION.boxed(),
-        07 => d07_bridge_repair::SOLUTION.boxed(),
-        08 => d08_resonant_collinearity::SOLUTION.boxed(),
-        09 => d09_disk_fragmenter::SOLUTION.boxed(),
-        10 => d10_hoof_it::SOLUTION.boxed(),
-        11 => d11_plutonian_pebbles::SOLUTION.boxed(),
-        12 => d12_garden_groups::SOLUTION.boxed(),
-        13 => d13_claw_contraption::SOLUTION.boxed(),
-        14 => d14_restroom_redoubt::SOLUTION.boxed(),
-        15 => d15_warehouse_woes::SOLUTION.boxed(),
+    let solution: &dyn Solution = match day_number {
+        01 => &d01_historian_hysteria::SOLUTION,
+        02 => &d02_red_nosed_reports::SOLUTION,
+        03 => &d03_mull_it_over::SOLUTION,
+        04 => &d04_ceres_search::SOLUTION,
+        05 => &d05_print_queue::SOLUTION,
+        06 => &d06_guard_gallivant::SOLUTION,
+        07 => &d07_bridge_repair::SOLUTION,
+        08 => &d08_resonant_collinearity::SOLUTION,
+        09 => &d09_disk_fragmenter::SOLUTION,
+        10 => &d10_hoof_it::SOLUTION,
+        11 => &d11_plutonian_pebbles::SOLUTION,
+        12 => &d12_garden_groups::SOLUTION,
+        13 => &d13_claw_contraption::SOLUTION,
+        14 => &d14_restroom_redoubt::SOLUTION,
+        15 => &d15_warehouse_woes::SOLUTION,
+        16 => &d16_reindeer_maze::SOLUTION,
         _ => unreachable!(),
     };
 
