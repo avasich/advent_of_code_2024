@@ -26,7 +26,7 @@ enum Direction {
 type Point = (usize, usize);
 
 impl Direction {
-    fn update_pos(&self) -> fn(Point) -> Point {
+    fn make_step(self) -> fn(Point) -> Point {
         match self {
             Direction::L => |(x, y)| (x - 1, y),
             Direction::U => |(x, y)| (x, y - 1),
@@ -94,7 +94,7 @@ fn p1(filename: &str) -> usize {
     let (mut xy, mut map) = parse_map(&mut lines, false);
 
     fn go(start: Point, dir: Direction, map: &[Vec<Tile>]) -> Option<(Point, Point)> {
-        let update_pos = dir.update_pos();
+        let update_pos = dir.make_step();
         let first_step = update_pos(start);
         let (mut x, mut y) = first_step;
 
@@ -124,15 +124,17 @@ fn p2(filename: &str) -> usize {
     let mut lines = read_lines(filename);
     let ((mut x, mut y), mut map) = parse_map(&mut lines, true);
 
-    fn go2(start: Point, dir: Direction, map: &[Vec<Tile>]) -> Option<Vec<(Point, Tile)>> {
-        let update_pos = dir.update_pos();
-
+    fn go(
+        start: Point,
+        make_step: fn(Point) -> Point,
+        map: &[Vec<Tile>],
+    ) -> Option<Vec<(Point, Tile)>> {
         let mut q = VecDeque::from([start]);
         let mut boxes = vec![];
         let mut visited = HashSet::new();
 
         while let Some(xy) = q.pop_front() {
-            let (x, y) = update_pos(xy);
+            let (x, y) = make_step(xy);
 
             match map[y][x] {
                 _ if visited.contains(&(x, y)) => continue,
@@ -156,20 +158,21 @@ fn p2(filename: &str) -> usize {
         Some(boxes)
     }
 
-    parse_moves(&mut lines).for_each(|m| match go2((x, y), m, &map) {
-        None => {}
-        Some(mut boxes) => {
-            let update_pos = m.update_pos();
-            while let Some(((bx, by), t)) = boxes.pop() {
-                map[by][bx] = Tile::Empty;
-                let (bx, by) = update_pos((bx, by));
-                map[by][bx] = t;
+    parse_moves(&mut lines).map(Direction::make_step).for_each(|make_step| {
+        match go((x, y), make_step, &map) {
+            None => {}
+            Some(mut boxes) => {
+                while let Some(((bx, by), t)) = boxes.pop() {
+                    map[by][bx] = Tile::Empty;
+                    let (bx, by) = make_step((bx, by));
+                    map[by][bx] = t;
+                }
+                (x, y) = make_step((x, y));
+                map[y][x] = Tile::Empty;
             }
-            (x, y) = update_pos((x, y));
-            map[y][x] = Tile::Empty;
         }
     });
-  
+
     weight_map(&map)
 }
 
