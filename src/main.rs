@@ -5,6 +5,8 @@ fn main() {
 }
 
 fn run_day(day_number: usize) {
+    
+    #[allow(clippy::zero_prefixed_literal)]
     let solution: &dyn Solution = match day_number {
         01 => &d01_historian_hysteria::SOLUTION,
         02 => &d02_red_nosed_reports::SOLUTION,

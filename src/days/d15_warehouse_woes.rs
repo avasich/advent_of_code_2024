@@ -124,11 +124,7 @@ fn p2(filename: &str) -> usize {
     let mut lines = read_lines(filename);
     let ((mut x, mut y), mut map) = parse_map(&mut lines, true);
 
-    fn go(
-        start: Point,
-        make_step: fn(Point) -> Point,
-        map: &[Vec<Tile>],
-    ) -> Option<Vec<(Point, Tile)>> {
+    fn go(start: Point, make_step: fn(Point) -> Point, map: &[Vec<Tile>]) -> Option<Vec<Point>> {
         let mut q = VecDeque::from([start]);
         let mut boxes = vec![];
         let mut visited = HashSet::new();
@@ -136,24 +132,16 @@ fn p2(filename: &str) -> usize {
         while let Some(xy) = q.pop_front() {
             let (x, y) = make_step(xy);
 
-            match map[y][x] {
+            let vs = match map[y][x] {
                 _ if visited.contains(&(x, y)) => continue,
                 Tile::Wall => return None,
-                Tile::BoxL => {
-                    boxes.extend([((x, y), Tile::BoxL), ((x + 1, y), Tile::BoxR)]);
-                    visited.insert((x + 1, y));
-                    q.push_back((x, y));
-                    q.push_back((x + 1, y));
-                }
-                Tile::BoxR => {
-                    boxes.extend([((x, y), Tile::BoxR), ((x - 1, y), Tile::BoxL)]);
-                    visited.insert((x - 1, y));
-                    q.push_back((x, y));
-                    q.push_back((x - 1, y));
-                }
-                Tile::Empty => {}
-            }
-            visited.insert((x, y));
+                Tile::BoxL => [(x, y), (x + 1, y)],
+                Tile::BoxR => [(x, y), (x - 1, y)],
+                Tile::Empty => continue,
+            };
+            visited.extend(vs);
+            boxes.extend(vs);
+            q.extend(vs);
         }
         Some(boxes)
     }
@@ -162,10 +150,11 @@ fn p2(filename: &str) -> usize {
         match go((x, y), make_step, &map) {
             None => {}
             Some(mut boxes) => {
-                while let Some(((bx, by), t)) = boxes.pop() {
+                while let Some((bx, by)) = boxes.pop() {
+                    let tile = map[by][bx];
                     map[by][bx] = Tile::Empty;
                     let (bx, by) = make_step((bx, by));
-                    map[by][bx] = t;
+                    map[by][bx] = tile;
                 }
                 (x, y) = make_step((x, y));
                 map[y][x] = Tile::Empty;
