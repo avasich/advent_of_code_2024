@@ -115,7 +115,7 @@ fn sides_change(a: &[(usize, usize)], b: &[(usize, usize)]) -> usize {
             // ...bbbbbbb...
             (Ordering::Equal, Ordering::Equal) => 4,
 
-            //  ..aaaaaa.......  .......aaaaaa..  
+            //  ..aaaaaa.......  .......aaaaaa..   
             //  ..bbbbbbbbbbb..  ..bbbbbbbbbbb..  
             
             //  ..aaaaaaaaaaa..  ..aaaaaaaaaaa..
