@@ -116,24 +116,10 @@ fn p1(filename: &str) -> usize {
             xy = (new_x, new_y);
         }
     });
-    
+
     weight_map(&map)
 }
 
-#[allow(unused)]
-fn print_map(map: &[Vec<Tile>], xy: (usize, usize), widen: bool) {
-    map.iter().enumerate().for_each(|(y, row)| {
-        row.iter().enumerate().for_each(|(x, t)| match t {
-            _ if (x, y) == xy => print!("@"),
-            Tile::Wall => print!("#"),
-            Tile::BoxL if widen => print!("["),
-            Tile::BoxL => println!("."),
-            Tile::BoxR => print!("]"),
-            Tile::Empty => print!("."),
-        });
-        println!();
-    });
-}
 fn p2(filename: &str) -> usize {
     let mut lines = read_lines(filename);
     let ((mut x, mut y), mut map) = parse_map(&mut lines, true);
@@ -195,27 +181,40 @@ fn p2(filename: &str) -> usize {
         }
     }
 
-    parse_moves(&mut lines).for_each(|m| {
-        match go((x, y), m, &map) {
-            Move::None => {}
-            Move::Horizontal(new_x, push_to) => {
-                match x > push_to {
-                    true => (push_to..x).for_each(|bx| map[y][bx] = map[y][bx + 1]),
-                    false => (x + 1..push_to + 1).rev().for_each(|bx| map[y][bx] = map[y][bx - 1]),
-                }
-                x = new_x;
+    parse_moves(&mut lines).for_each(|m| match go((x, y), m, &map) {
+        Move::None => {}
+        Move::Horizontal(new_x, push_to) => {
+            match x > push_to {
+                true => (push_to..x).for_each(|bx| map[y][bx] = map[y][bx + 1]),
+                false => (x + 1..push_to + 1).rev().for_each(|bx| map[y][bx] = map[y][bx - 1]),
             }
-            Move::Vertical(new_y, mut boxes) => {
-                while let Some(((bx, by), (new_bx, new_by), t)) = boxes.pop() {
-                    map[by][bx] = Tile::Empty;
-                    map[new_by][new_bx] = t;
-                }
-                y = new_y;
+            x = new_x;
+        }
+        Move::Vertical(new_y, mut boxes) => {
+            while let Some(((bx, by), (new_bx, new_by), t)) = boxes.pop() {
+                map[by][bx] = Tile::Empty;
+                map[new_by][new_bx] = t;
             }
+            y = new_y;
         }
     });
 
     weight_map(&map)
+}
+
+#[allow(unused)]
+fn print_map(map: &[Vec<Tile>], xy: (usize, usize), widen: bool) {
+    map.iter().enumerate().for_each(|(y, row)| {
+        row.iter().enumerate().for_each(|(x, t)| match t {
+            _ if (x, y) == xy => print!("@"),
+            Tile::Wall => print!("#"),
+            Tile::BoxL if widen => print!("["),
+            Tile::BoxL => println!("."),
+            Tile::BoxR => print!("]"),
+            Tile::Empty => print!("."),
+        });
+        println!();
+    });
 }
 
 pub const SOLUTION: Day<usize, usize> = day! { 15,
