@@ -1,4 +1,4 @@
-use std::collections::HashSet;
+use std::collections::{HashSet, VecDeque};
 
 use itertools::Itertools;
 
@@ -124,81 +124,52 @@ fn p2(filename: &str) -> usize {
     let mut lines = read_lines(filename);
     let ((mut x, mut y), mut map) = parse_map(&mut lines, true);
 
-    enum Move {
-        None,
-        Horizontal(usize, usize),
-        Vertical(usize, Vec<(Point, Point, Tile)>),
-    }
-
-    fn go(start: Point, dir: Direction, map: &[Vec<Tile>]) -> Move {
+    fn go2(start: Point, dir: Direction, map: &[Vec<Tile>]) -> Option<Vec<(Point, Tile)>> {
         let update_pos = dir.update_pos();
-        let first_step = update_pos(start);
 
-        match dir {
-            Direction::L | Direction::R => {
-                let (mut x, mut y) = update_pos(start);
-                loop {
-                    match map[y][x] {
-                        Tile::Wall => return Move::None,
-                        Tile::BoxL | Tile::BoxR => (x, y) = update_pos((x, y)),
-                        Tile::Empty => return Move::Horizontal(update_pos(start).0, x),
-                    }
+        let mut q = VecDeque::from([start]);
+        let mut boxes = vec![];
+        let mut visited = HashSet::new();
+
+        while let Some(xy) = q.pop_front() {
+            let (x, y) = update_pos(xy);
+
+            match map[y][x] {
+                _ if visited.contains(&(x, y)) => continue,
+                Tile::Wall => return None,
+                Tile::BoxL => {
+                    boxes.extend([((x, y), Tile::BoxL), ((x + 1, y), Tile::BoxR)]);
+                    visited.insert((x + 1, y));
+                    q.push_back((x, y));
+                    q.push_back((x + 1, y));
                 }
-            }
-            Direction::U | Direction::D => {
-                let mut front = HashSet::from([start]);
-                let mut affected = vec![];
-
-                loop {
-                    let new_front = front.iter().copied().map(update_pos).try_fold(
-                        HashSet::new(),
-                        |mut fr, (x, y)| match map[y][x] {
-                            Tile::Wall => None,
-                            Tile::BoxL => {
-                                fr.extend([(x, y), (x + 1, y)]);
-                                Some(fr)
-                            }
-                            Tile::BoxR => {
-                                fr.extend([(x - 1, y), (x, y)]);
-                                Some(fr)
-                            }
-                            Tile::Empty => Some(fr),
-                        },
-                    );
-
-                    match new_front {
-                        None => return Move::None,
-                        Some(f) if f.is_empty() => return Move::Vertical(first_step.1, affected),
-                        Some(f) => {
-                            affected.extend(f.iter().map(|&(box_x, box_y)| {
-                                ((box_x, box_y), update_pos((box_x, box_y)), map[box_y][box_x])
-                            }));
-                            front = f;
-                        }
-                    }
+                Tile::BoxR => {
+                    boxes.extend([((x, y), Tile::BoxR), ((x - 1, y), Tile::BoxL)]);
+                    visited.insert((x - 1, y));
+                    q.push_back((x, y));
+                    q.push_back((x - 1, y));
                 }
+                Tile::Empty => {}
             }
+            visited.insert((x, y));
         }
+        Some(boxes)
     }
 
-    parse_moves(&mut lines).for_each(|m| match go((x, y), m, &map) {
-        Move::None => {}
-        Move::Horizontal(new_x, push_to) => {
-            match x > push_to {
-                true => (push_to..x).for_each(|bx| map[y][bx] = map[y][bx + 1]),
-                false => (x + 1..push_to + 1).rev().for_each(|bx| map[y][bx] = map[y][bx - 1]),
-            }
-            x = new_x;
-        }
-        Move::Vertical(new_y, mut boxes) => {
-            while let Some(((bx, by), (new_bx, new_by), t)) = boxes.pop() {
+    parse_moves(&mut lines).for_each(|m| match go2((x, y), m, &map) {
+        None => {}
+        Some(mut boxes) => {
+            let update_pos = m.update_pos();
+            while let Some(((bx, by), t)) = boxes.pop() {
                 map[by][bx] = Tile::Empty;
-                map[new_by][new_bx] = t;
+                let (bx, by) = update_pos((bx, by));
+                map[by][bx] = t;
             }
-            y = new_y;
+            (x, y) = update_pos((x, y));
+            map[y][x] = Tile::Empty;
         }
     });
-
+  
     weight_map(&map)
 }
 
