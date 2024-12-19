@@ -1,11 +1,10 @@
 use advent_of_code_2024::{days::*, utils::Solution};
 
 fn main() {
-    run_day(16);
+    run_day(17);
 }
 
 fn run_day(day_number: usize) {
-    
     #[allow(clippy::zero_prefixed_literal)]
     let solution: &dyn Solution = match day_number {
         01 => &d01_historian_hysteria::SOLUTION,
@@ -24,6 +23,7 @@ fn run_day(day_number: usize) {
         14 => &d14_restroom_redoubt::SOLUTION,
         15 => &d15_warehouse_woes::SOLUTION,
         16 => &d16_reindeer_maze::SOLUTION,
+        17 => &d17_chronospatial_computer::SOLUTION,
         _ => unreachable!(),
     };
 
