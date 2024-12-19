@@ -1,7 +1,7 @@
 use advent_of_code_2024::{days::*, utils::Solution};
 
 fn main() {
-    run_day(15);
+    run_day(16);
 }
 
 fn run_day(day_number: usize) {
