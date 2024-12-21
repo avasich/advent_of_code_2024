@@ -79,17 +79,15 @@ fn traverse(reg: u64, program: &[u64], d: usize) -> Option<u64> {
         return Some(reg);
     }
     let d0 = program.len() - d - 1;
-    (0..8)
-        .filter_map(|x| {
-            let p = 8_u64.pow(d0 as u32);
-            let reg = reg - (reg / p % 8) * p + x * p;
-            let c = std::iter::zip(execute(&mut [reg, 0, 0], program), program.iter())
-                .skip(d0)
-                .filter(|&(a, &b)| a == b)
-                .count();
-            (c == d + 1).then_some(reg)
-        })
-        .find_map(|reg| traverse(reg, program, d + 1))
+    (0..8).find_map(|x| {
+        let p = 8_u64.pow(d0 as u32);
+        let reg = reg - (reg / p % 8) * p + x * p;
+        let c = std::iter::zip(execute(&mut [reg, 0, 0], program), program.iter())
+            .skip(d0)
+            .filter(|&(a, &b)| a == b)
+            .count();
+        (c == d + 1).then(|| traverse(reg, program, d + 1)).flatten()
+    })
 }
 
 pub const SOLUTION: Day<String, u64> = day! { 17,
