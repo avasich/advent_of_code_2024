@@ -1,46 +1,44 @@
-use std::collections::HashSet;
+use std::{collections::HashSet, str::pattern::Pattern};
 
 use crate::{
     day,
     utils::{Day, Task, read_lines},
 };
 
-fn parse_input(filename: &str) -> (Vec<Vec<char>>, Vec<Vec<char>>) {
+fn parse_input(filename: &str) -> (Vec<String>, Vec<String>) {
     let mut lines = read_lines(filename);
 
-    let towels = lines.next().unwrap().split(", ").map(|p| p.chars().collect()).collect();
+    let towels = lines.next().unwrap().split(", ").map(String::from).collect();
     lines.next();
-    let patterns = lines.map(|line| line.chars().collect()).collect();
+    let patterns = lines.collect();
 
     (towels, patterns)
 }
 
-fn check(towels: &HashSet<&[char]>, pattern: &[char]) -> usize {
-    (0..pattern.len()).rev().map(|i| (i, &pattern[i..])).fold(
-        vec![0; pattern.len()],
-        |mut flags, (i, suffix)| {
-            flags[i] = (0..suffix.len() - 1)
-                .filter(|&j| towels.contains(&suffix[..=j]))
-                .map(|j| flags[i + j + 1])
-                .sum::<usize>()
-                + if towels.contains(suffix) { 1 } else { 0 };
+fn ways_to_combine(towels: &HashSet<&str>, pattern: &str) -> usize {
+    (0..pattern.len()).map(|i| (i, &pattern[..=i])).fold(
+        vec![0_usize; pattern.len()],
+        |mut flags, (i, prefix)| {
+            towels.iter().filter(|t| t.is_suffix_of(prefix)).for_each(|t| {
+                flags[i] += if i >= t.len() { flags[i - t.len()] } else { 1 };
+            });
             flags
         },
-    )[0]
+    )[pattern.len() - 1]
 }
 
 fn p1(filename: &str) -> usize {
     let (towels, patterns) = parse_input(filename);
-    let towels: HashSet<_> = towels.iter().map(Vec::as_slice).collect();
+    let towels: HashSet<_> = towels.iter().map(String::as_str).collect();
 
-    patterns.iter().filter(|p| check(&towels, p.as_slice()) > 0).count()
+    patterns.iter().filter(|p| ways_to_combine(&towels, p.as_str()) > 0).count()
 }
 
 fn p2(filename: &str) -> usize {
     let (towels, patterns) = parse_input(filename);
-    let towels: HashSet<_> = towels.iter().map(Vec::as_slice).collect();
+    let towels: HashSet<_> = towels.iter().map(String::as_str).collect();
 
-    patterns.iter().map(|p| check(&towels, p.as_slice())).sum()
+    patterns.iter().map(|p| ways_to_combine(&towels, p.as_str())).sum()
 }
 
 pub const SOLUTION: Day<usize, usize> = day! { 19,
