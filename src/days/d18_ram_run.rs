@@ -72,21 +72,16 @@ pub const SOLUTION: Day<usize, (usize, usize)> = day! { 18,
 };
 
 #[cfg(test)]
-mod d19_tests {
+mod d18_tests {
     use super::*;
 
     #[test]
     fn p1_examples_test() {
-        assert_eq!(SOLUTION.part_1.run_example(0), Some(22));
+        assert_eq!(SOLUTION.part_1.run_example(0), 22);
     }
 
     #[test]
     fn p2_examples_test() {
         assert_eq!(SOLUTION.part_2.run_example(0), (6, 1));
-    }
-    
-    #[test]
-    fn playground() {
-        let _r = p2(SOLUTION.part_2.examples[0]);
     }
 }
