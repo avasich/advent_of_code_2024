@@ -17,3 +17,4 @@ pub mod d16_reindeer_maze;
 pub mod d17_chronospatial_computer;
 pub mod d18_ram_run;
 pub mod d19_linen_layout;
+pub mod d20_race_condition;

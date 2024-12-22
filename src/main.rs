@@ -1,7 +1,7 @@
 use advent_of_code_2024::{days::*, utils::Solution};
 
 fn main() {
-    run_day(19);
+    run_day(20);
 }
 
 fn run_day(day_number: usize) {
@@ -26,6 +26,7 @@ fn run_day(day_number: usize) {
         17 => &d17_chronospatial_computer::SOLUTION,
         18 => &d18_ram_run::SOLUTION,
         19 => &d19_linen_layout::SOLUTION,
+        20 => &d20_race_condition::SOLUTION,
         _ => unreachable!(),
     };
 
