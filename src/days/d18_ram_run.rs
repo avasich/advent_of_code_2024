@@ -17,15 +17,10 @@ fn parse_input(filename: &str) -> (usize, usize, usize, impl Iterator<Item = (us
         Some((a.parse::<usize>().ok()?, b.parse::<usize>().ok()?))
     });
 
-    // let (w, h) = pairs.next().unwrap();
-
     (w, h, steps, pairs)
 }
 
-fn p1(filename: &str) -> Option<usize> {
-    let (w, h, steps, blocks) = parse_input(filename);
-    let blocks: HashSet<_> = blocks.take(steps).collect();
-
+fn route(w: usize, h: usize, blocks: HashSet<(usize, usize)>) -> Option<usize> {
     let mut visited = HashSet::from([(0, 0)]);
     let mut q = VecDeque::from([(0, 0, 0)]);
 
@@ -50,11 +45,28 @@ fn p1(filename: &str) -> Option<usize> {
     None
 }
 
-fn p2(filename: &str) -> u64 {
-    0
+fn p1(filename: &str) -> usize {
+    let (w, h, steps, blocks) = parse_input(filename);
+    route(w, h, blocks.take(steps).collect()).unwrap()
 }
 
-pub const SOLUTION: Day<Option<usize>, u64> = day! { 18,
+fn p2(filename: &str) -> (usize, usize) {
+    let (w, h, _, blocks) = parse_input(filename);
+    let blocks: Vec<_> = blocks.collect();
+
+    let (mut l, mut r) = (0, blocks.len());
+    while r > l {
+        let m = (r + l) / 2;
+        match route(w, h, blocks[..=m].iter().copied().collect()) {
+            Some(_) => l = m + 1,
+            None => r = m,
+        }
+    }
+
+    blocks[r]
+}
+
+pub const SOLUTION: Day<usize, (usize, usize)> = day! { 18,
     part_1: { examples: ["example.txt"], func: p1 },
     part_2: { examples: ["example.txt"], func: p2 }
 };
@@ -66,5 +78,15 @@ mod d19_tests {
     #[test]
     fn p1_examples_test() {
         assert_eq!(SOLUTION.part_1.run_example(0), Some(22));
+    }
+
+    #[test]
+    fn p2_examples_test() {
+        assert_eq!(SOLUTION.part_2.run_example(0), (6, 1));
+    }
+    
+    #[test]
+    fn playground() {
+        let _r = p2(SOLUTION.part_2.examples[0]);
     }
 }
