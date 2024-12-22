@@ -15,3 +15,4 @@ pub mod d14_restroom_redoubt;
 pub mod d15_warehouse_woes;
 pub mod d16_reindeer_maze;
 pub mod d17_chronospatial_computer;
+pub mod d18_ram_run;

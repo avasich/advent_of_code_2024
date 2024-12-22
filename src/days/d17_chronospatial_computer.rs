@@ -82,11 +82,11 @@ fn traverse(reg: u64, program: &[u64], d: usize) -> Option<u64> {
     (0..8).find_map(|x| {
         let p = 8_u64.pow(d0 as u32);
         let reg = reg - (reg / p % 8) * p + x * p;
-        let c = std::iter::zip(execute(&mut [reg, 0, 0], program), program.iter())
+        Itertools::zip_longest(execute(&mut [reg, 0, 0], program), program.iter())
             .skip(d0)
-            .filter(|&(a, &b)| a == b)
-            .count();
-        (c == d + 1).then(|| traverse(reg, program, d + 1)).flatten()
+            .all(|pair| pair.both().is_some_and(|(x, &y)| x == y))
+            .then(|| traverse(reg, program, d + 1))
+            .flatten()
     })
 }
 
