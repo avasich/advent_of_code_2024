@@ -15,13 +15,15 @@ fn parse_input(filename: &str) -> (Vec<Vec<char>>, Vec<Vec<char>>) {
     (towels, patterns)
 }
 
-fn check(towels: &HashSet<&[char]>, pattern: &[char]) -> bool {
+fn check(towels: &HashSet<&[char]>, pattern: &[char]) -> usize {
     (0..pattern.len()).rev().map(|i| (i, &pattern[i..])).fold(
-        vec![false; pattern.len()],
+        vec![0; pattern.len()],
         |mut flags, (i, suffix)| {
-            flags[i] = (0..suffix.len())
+            flags[i] = (0..suffix.len() - 1)
                 .filter(|&j| towels.contains(&suffix[..=j]))
-                .any(|j| i + j + 1 >= pattern.len() || flags[i + j + 1]);
+                .map(|j| flags[i + j + 1])
+                .sum::<usize>()
+                + if towels.contains(suffix) { 1 } else { 0 };
             flags
         },
     )[0]
@@ -31,11 +33,14 @@ fn p1(filename: &str) -> usize {
     let (towels, patterns) = parse_input(filename);
     let towels: HashSet<_> = towels.iter().map(Vec::as_slice).collect();
 
-    patterns.iter().filter(|p| check(&towels, p.as_slice())).count()
+    patterns.iter().filter(|p| check(&towels, p.as_slice()) > 0).count()
 }
 
-fn p2(_filename: &str) -> usize {
-    0
+fn p2(filename: &str) -> usize {
+    let (towels, patterns) = parse_input(filename);
+    let towels: HashSet<_> = towels.iter().map(Vec::as_slice).collect();
+
+    patterns.iter().map(|p| check(&towels, p.as_slice())).sum()
 }
 
 pub const SOLUTION: Day<usize, usize> = day! { 19,
@@ -54,7 +59,7 @@ mod d19_tests {
 
     #[test]
     fn p2_examples_test() {
-        assert_eq!(SOLUTION.part_2.run_example(0), 0);
+        assert_eq!(SOLUTION.part_2.run_example(0), 16);
     }
 
     #[test]
